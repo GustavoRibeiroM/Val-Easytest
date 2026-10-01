@@ -1,0 +1,727 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Controle de Viscosidade - Valgroup</title>
+
+<style>
+* { box-sizing: border-box; }
+
+:root {
+    --bg: #111315;
+    --card: #1a1d20;
+    --card2: #202428;
+    --border: #30353a;
+    --text: #f2f4f5;
+    --muted: #9ca3a8;
+    --accent: #e58b2a;
+    --green: #4fc47b;
+    --yellow: #e8b84a;
+    --red: #e05c5c;
+}
+
+body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: Arial, sans-serif;
+}
+
+.app {
+    max-width: 800px; 
+    margin: auto;
+    padding: 20px;
+}
+
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+.eyebrow {
+    color: var(--accent);
+    font-size: 12px;
+    font-weight: bold;
+    letter-spacing: 1.6px;
+}
+
+h1 { margin: 5px 0; font-size: 26px; }
+p { margin: 0; color: var(--muted); font-size: 13px; }
+
+.clock {
+    color: var(--muted);
+    background: var(--card);
+    border: 1px solid var(--border);
+    padding: 8px 14px;
+    border-radius: 10px;
+    font-size: 14px;
+}
+
+/* NAVEGAÇÃO POR ABAS */
+.tabs {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 10px;
+    overflow-x: auto;
+}
+
+.tab-btn {
+    background: var(--card2);
+    color: var(--muted);
+    border: 1px solid var(--border);
+    padding: 14px 20px;
+    border-radius: 10px;
+    font-size: 15px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+}
+
+.tab-btn.active {
+    background: var(--accent);
+    color: #111;
+    border-color: var(--accent);
+}
+
+.tab-content { display: none; }
+.tab-content.active { display: block; }
+.admin-only { display: none; }
+
+/* CARDS EM COLUNA ÚNICA PARA TABLET */
+.grid { display: grid; grid-template-columns: 1fr; gap: 18px; }
+
+.card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 24px;
+    margin-bottom: 18px;
+}
+
+h2 { margin: 0 0 10px; font-size: 20px; }
+
+label {
+    display: block;
+    color: #c8cdd0;
+    font-size: 14px;
+    font-weight: bold;
+    margin: 18px 0 8px;
+}
+
+select, input {
+    width: 100%;
+    background: var(--card2);
+    color: var(--text);
+    border: 1px solid var(--border);
+    border-radius: 9px;
+    padding: 16px; 
+    font-size: 16px;
+    outline: none;
+}
+
+select:focus, input:focus { border-color: var(--accent); }
+
+/* SELEÇÃO DE CORES DA SESSÃO */
+.color-selector {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 10px;
+    margin-top: 10px;
+    max-height: 250px;
+    overflow-y: auto;
+    padding: 10px;
+    background: var(--card2);
+    border: 1px solid var(--border);
+    border-radius: 9px;
+}
+
+.color-option {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 14px;
+    background: var(--card);
+    padding: 10px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.color-option input[type="checkbox"] { width: 18px; height: 18px; }
+
+/* STATUS E BOTÕES */
+.standard {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #151719;
+    border: 1px solid var(--border);
+    border-radius: 9px;
+    padding: 12px 15px;
+    margin-top: 12px;
+    font-size: 14px;
+    color: var(--muted);
+}
+
+button {
+    border: 0;
+    border-radius: 9px;
+    padding: 16px;
+    font-size: 15px;
+    font-weight: bold;
+    cursor: pointer;
+}
+button:disabled { opacity: .45; cursor: not-allowed; }
+
+.primary { background: var(--accent); color: #111; }
+.secondary { background: #2a2f34; color: var(--text); border: 1px solid var(--border); }
+.save { width: 100%; background: var(--green); color: #101512; margin-top: 20px; padding: 18px; font-size: 16px; }
+.danger { background: #382326; color: #f29a9a; }
+
+.status {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    margin-top: 15px;
+    padding: 14px 15px;
+    border-radius: 9px;
+    background: #202428;
+    color: var(--muted);
+    font-size: 15px;
+    font-weight: bold;
+}
+.status-dot { width: 12px; height: 12px; border-radius: 50%; background: #777; }
+.status.ok { color: var(--green); }
+.status.ok .status-dot { background: var(--green); }
+.status.below { color: var(--yellow); }
+.status.below .status-dot { background: var(--yellow); }
+.status.above { color: var(--red); }
+.status.above .status-dot { background: var(--red); }
+
+/* LISTAS BASE DE DADOS */
+.crud-group { display: flex; gap: 8px; margin-bottom: 12px; }
+.crud-list { list-style: none; padding: 0; margin: 0; max-height: 200px; overflow-y: auto; }
+.crud-list li { display: flex; justify-content: space-between; align-items: center; background: var(--card2); border: 1px solid var(--border); padding: 10px 15px; border-radius: 8px; margin-bottom: 6px; font-size: 14px; }
+.delete-btn { background: transparent; color: var(--red); border: none; padding: 5px; font-size: 13px; cursor: pointer; }
+
+/* TABELAS E BADGES */
+.table-container { overflow-x: auto; margin-top: 15px; }
+table { width: 100%; border-collapse: collapse; min-width: 650px; }
+th { color: var(--muted); font-size: 12px; text-align: left; padding: 12px; border-bottom: 1px solid var(--border); }
+td { padding: 12px; border-bottom: 1px solid #282d31; font-size: 14px; }
+
+.pill { display: inline-block; padding: 6px 10px; border-radius: 20px; font-size: 12px; font-weight: bold; }
+.pill.ok { background: #193324; color: var(--green); }
+.pill.below { background: #382f1a; color: var(--yellow); }
+.pill.above { background: #3a2023; color: var(--red); }
+
+.session-progress { background: #151719; border: 1px solid var(--border); padding: 16px; border-radius: 9px; margin-bottom: 20px; }
+.badge-finished { background: var(--green); color: #101512; padding: 6px 10px; border-radius: 6px; font-size: 13px; font-weight: bold; }
+
+footer { text-align: center; margin-top: 30px; font-size: 12px; color: var(--muted); }
+</style>
+</head>
+<body>
+
+<main class="app">
+
+<header>
+    <div>
+        <span class="eyebrow">VALGROUP • CONTROLE DE PRODUÇÃO</span>
+        <h1>Viscosidade de Tintas</h1>
+    </div>
+    <div class="clock" id="currentTime">--:--</div>
+</header>
+
+<!-- ABAS DE NAVEGAÇÃO -->
+<div class="tabs">
+    <button class="tab-btn active" onclick="switchTab('measurementTab', this)">⏱️ Área de Medição</button>
+    <!-- ABA ADMIN -->
+    <button class="tab-btn admin-only" id="adminTabBtn" onclick="switchTab('databaseTab', this)">🗄 Base de Dados</button>
+    <button class="tab-btn" onclick="switchTab('historyTab', this)">📊 Histórico & Exportar</button>
+</div>
+
+<!-- ABA 1: ÁREA DE MEDIÇÃO -->
+<section id="measurementTab" class="tab-content active">
+    <div class="grid">
+        <div class="card">
+            <h2>1. Configurar Sessão da Máquina</h2>
+            
+            <label for="machine">Máquina</label>
+            <select id="machine"></select>
+
+            <label for="operator">Operador</label>
+            <select id="operator"></select>
+
+            <label for="order">Pedido / Cliente</label>
+            <input type="text" id="order" list="ordersDataList" placeholder="Selecione na lista ou digite um novo...">
+            <datalist id="ordersDataList"></datalist>
+
+            <label>Selecione as Cores da Rodada</label>
+            <div class="color-selector" id="colorCheckboxes"></div>
+            
+            <div style="display: flex; gap: 8px; margin-top: 12px;">
+                <input type="text" id="customInkInput" placeholder="Tinta não listada? Digite aqui...">
+                <button class="secondary" onclick="addCustomInk()" style="padding: 0 20px; white-space: nowrap;">+ Add</button>
+            </div>
+
+            <button class="primary" style="width:100%; margin-top:25px;" onclick="startMachineSession()">
+                🚀 Iniciar Sessão da Máquina
+            </button>
+        </div>
+
+        <div class="card">
+            <h2>2. Registrar Medição</h2>
+            
+            <div id="sessionStatusBox" class="session-progress">
+                <span style="color:var(--muted); font-size:14px;">Nenhuma sessão ativa. Inicie acima.</span>
+            </div>
+
+            <label for="activeColorSelect">Cor a ser registrada</label>
+            <select id="activeColorSelect" disabled></select>
+
+            <div class="standard">
+                <span>Padrão de referência</span>
+                <strong>17–21 segundos</strong>
+            </div>
+
+            <label for="viscosity">Tempo medido no cronômetro (segundos)</label>
+            <input id="viscosity" type="number" step="0.1" placeholder="Ex.: 18,5" oninput="updateStatus()" disabled>
+
+            <div class="status" id="status">
+                <span class="status-dot"></span>
+                <span>Aguardando digitação</span>
+            </div>
+
+            <button class="save" id="saveBtn" onclick="saveRecord()" disabled>Salvar Medição desta Cor</button>
+        </div>
+    </div>
+</section>
+
+<!-- ABA 2: BASE DE DADOS -->
+<section id="databaseTab" class="tab-content admin-only">
+    <div class="grid">
+        <div class="card">
+            <h2>Cadastrar Operadores</h2>
+            <p style="margin-bottom:10px;">Adicione códigos/nomes de operadores.</p>
+            <div class="crud-group">
+                <input type="text" id="newOperatorInput" placeholder="Ex: OP-104 João">
+                <button class="primary" onclick="addMasterData('operators', 'newOperatorInput')">Adicionar</button>
+            </div>
+            <ul class="crud-list" id="operatorsList"></ul>
+        </div>
+
+        <div class="card">
+            <h2>Cadastrar Pedidos (Fixo)</h2>
+            <p style="margin-bottom:10px;">Adicione à lista permanente.</p>
+            <div class="crud-group">
+                <input type="text" id="newOrderInput" placeholder="Ex: Atacadão - Pedido #402">
+                <button class="primary" onclick="addMasterData('orders', 'newOrderInput')">Adicionar</button>
+            </div>
+            <ul class="crud-list" id="ordersList"></ul>
+        </div>
+
+        <div class="card">
+            <h2>Catálogo de Tintas (Fixo)</h2>
+            <p style="margin-bottom:10px;">Cadastre as tintas na lista permanente.</p>
+            <div class="crud-group">
+                <input type="text" id="newInkInput" placeholder="Ex: Vermelho 485">
+                <button class="primary" onclick="addMasterData('inks', 'newInkInput')">Adicionar</button>
+            </div>
+            <ul class="crud-list" id="inksList"></ul>
+        </div>
+    </div>
+</section>
+
+<!-- ABA 3: HISTÓRICO -->
+<section id="historyTab" class="tab-content">
+    <div class="card">
+        <h2>Histórico Geral de Medições</h2>
+        
+        <div style="display:flex; gap:10px; margin-bottom:20px; flex-wrap:wrap;">
+            <button class="secondary" onclick="exportCSV()" style="flex:1;">⇩ Exportar Planilha (CSV)</button>
+            <button class="danger admin-only" id="adminClearBtn" onclick="clearHistory()">Excluir Histórico</button>
+        </div>
+
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Data/Hora</th>
+                        <th>Máquina</th>
+                        <th>Operador</th>
+                        <th>Pedido/Cliente</th>
+                        <th>Cor/Tinta</th>
+                        <th>Tempo</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody id="historyBody">
+                    <tr><td colspan="7" style="text-align:center; color:var(--muted); padding: 30px;">Nenhum registro até o momento.</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>
+
+<footer>Valgroup • Controle Integrado de Viscosidade</footer>
+
+</main>
+
+<script>
+/* VERIFICAÇÃO DO MODO ADMIN (Link Secreto) */
+function checkAdminAccess() {
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('admin') === 'valgroup2026') {
+        document.getElementById('adminTabBtn').style.display = 'block';
+        document.getElementById('adminClearBtn').style.display = 'inline-block';
+    }
+}
+
+const validMachines = [2319, 2320, 2321, 2322, 2323, 2324, 2325, 2327, 2329, 2330, 2331, 2332, 2333, 2334, 2335];
+const MIN = 17;
+const MAX = 21;
+
+const defaultOperators = [
+    "1243 - ALYSSON GUNDIM DE SALOMAO", "1052 - DANIEL DE SOUZA LEITE", "1096 - FABIO FONSECA", 
+    "1212 - JOÃO EDUARDO DO CARMO COUTO", "1278 - JOAO PEDRO OLIVEIRA DA PALMA", "1347 - JOÃO VITOR JUSTINO ANTUNES", 
+    "1026 - JOSE RONALDO DOMINGOS", "1195 - LEONARDO HENRIQUE MACHADO DA SILVA", "1190 - LUCAS CORREA DOS SANTOS", 
+    "1351 - LUCIANO LOURENCO FERNANDES", "1117 - LUIZ GUSTAVO DE CAMPOS CORREA E CASTRO", "1021 - MARCOS ROBERTO NOGUEIRA DOS SANTOS", 
+    "1032 - NELSON RIBEIRO DA SILVA", "1124 - RAFAEL DE SOUZA GUARDIANO DOS REIS", "1227 - RENAN LUIS DA SILVA", 
+    "1100 - ROBSON DO CARMO COUTO", "1115 - THIAGO BARBOSA SILVA", "1394 - THIAGO DOS SANTOS JERONIMO", 
+    "1285 - THIAGO RIBEIRO FONSECA", "1256 - WELLINGTON RIBEIRO SILVA", "1222 - ALISSON OLIVEIRA DE MARINS", 
+    "1410 - CARLOS HENRIQUE DE CARVALHO", "1286 - EMANUEL FELIPE DE OLIVEIRA FONSECA", "1020 - FABIO ZANIN", 
+    "1188 - GABRIEL MOTA DE ALMEIDA", "1330 - GIAN FONSECA DE SOUZA", "1107 - INALDO HENRIQUE DE OLIVEIRA", 
+    "1029 - JOSE MAURICIO GUIMARAES NOGUEIRA", "1030 - JULIANO DE SOUZA MENEZES", "1213 - MACIEL RIBEIRO CORDEIRO", 
+    "1031 - MARCIO RIBEIRO SALES", "1373 - MATEUS APARECIDO PINTO", "1189 - MATHEUS CARVALHO GONÇALVES", 
+    "1305 - MESSIAS SANTO DE ALMEIDA", "1033 - RAFAEL DE ARAUJO SANTOS", "1176 - RAMON FERNANDES DE NORONHA", 
+    "1094 - RICARDO MENEZES DOS SANTOS", "1093 - VINICIUS DA SILVA VIEIRA", "1151 - WALTER MARINHO ALVES FILHO", 
+    "1076 - ADILSON MONTEIRO DE OLIVEIRA", "1050 - ALEXANDRE VALDOMIRO PINTO", "1072 - EDER DINIZ NATIVIDADE", 
+    "1327 - EMANUEL RIBEIRO", "1226 - GABRIEL BATISTA DA SILVA", "1023 - GILMAR DE OLIVEIRA JOAQUIM", 
+    "1025 - JOAO RICARDO DE SIQUEIRA MOTA", "1245 - JOÃO VITOR DE SOUZA JACOB", "1450 - LORAN", 
+    "1223 - LUAN PHELIPE PEDREIRA DE OLIVEIRA", "1343 - MARCUS AURELIUS DA SILVA RIBEIRO", "1089 - REINALDO MONTEIRO DE OLIVEIRA", 
+    "1338 - ROGER HENRIQUE NOBRE", "1324 - SAMUEL PAES DOS SANTOS", "1064 - SANDRO DE ALMEIDA CHAVES", 
+    "1035 - TIAGO FONSECA", "1197 - WILLIANS SILVA LEMES", "1120 - ADRIANO CARVALHO LOPES", "1022 - AILTON DE JESUS", 
+    "1317 - CAYO VINICIUS DE JESUS MARCIANO", "1090 - DANILO AUGUSTO DE LIMA MONTEIRO", "1406 - DAVID BRENO DE JESUS SANTOS", 
+    "1357 - EDUARDO RODRIGUES DE SOUZA", "1131 - FLAVIO GALVAO FELICIANO", "1385 - HEITOR DE OLIVEIRA ZACARIAS DE SOUZA", 
+    "1172 - JOÃO LUCAS GONÇALVES SANTANNA", "1329 - JOAO PAULO DA SILVA", "1251 - LUIZ MIGUEL LEMES DOS SANTOS", 
+    "1252 - PAULO CESAR DA SILVA FILHO", "1418 - RAFAEL OLIVEIRA DE ANDRADE", "1034 - RODRIGO AMERICO ALEXANDRE", 
+    "1387 - ROMARIO ROLIM DO AMARAL", "1274 - RUAN CARNEIRO CIPRIANO", "1105 - WAGNER LUCAS DE ALMEIDA", 
+    "1027 - WAGNER RODRIGUES DE SOUZA"
+];
+
+const defaultOrders = [
+    "ABC", "Amarelinha", "Amigão", "Angeloni", "Assaí", "Atacadão", "Atakarejo", "Bahamas", "Bem Barato", 
+    "Big Compra", "Boa Super", "BobSak Pack", "Branca Semar", "Brasil Atacadista", "CA Hiper", "Casa Avenida", 
+    "Cofesa", "Comercial Esperança", "Comesp", "Cordeiro Atacado", "Covabra Sul", "Dia %", "Dia Brasil", 
+    "Extra Plus", "Farma Ponte", "Guanabara", "Koch Komprão", "Lixo Reciclável", "Macromix Atacado", "Marron 7533", 
+    "Max Rede", "MaxFort", "Mundial", "P.A Novo", "Parana", "Plástico Verde", "Proença", "Rede 20", "Rede Bom Lugar", 
+    "Redefort", "Reis", "Rissul", "Sams Club", "São Judas Tadeu", "SM Archer", "Spani", "Spani Atakadista", 
+    "St. Marche", "Super Atacadão", "Super BH", "Super Estrela", "Super Golf", "Super Mais", "Super Tauste", 
+    "Tonin", "Varejão Saúde", "Volte Sempre", "Zaffari", "Zé Delivery", "Bom Dia", "Bob Impratacadão", "Coosuper", 
+    "Unisuper", "Carrefour", "Shibata", "Fort Atacadista", "Prezunic", "SAC", "Alvorada", "Sac VLT", "Supermercado Reis", 
+    "Super 88", "Pague Menos", "SP Market", "Forte Mix", "Ville Fort", "Big Mart", "Sac RJ", "Porecatu"
+];
+
+const defaultInks = [
+    "Amarelo 012", "Amarelo 109", "Amarelo 116", "Amarelo 137", "Amarelo 2017", "Amarelo 6003", "Amarelo 803",
+    "Azul 072", "Azul 243", "Azul 2746", "Azul 2747", "Azul 2766", "Azul 2767", "Azul 288", "Azul 2935", "Azul 2955", 
+    "Azul 534", "Azul 541", "Azul 661", "Azul 662", "Azul 672", "Azul Condor", "Azul Cyan", "Azul Ponte", "Azul Reflex", "Azul Shibata",
+    "Branco", "Cinza",
+    "Laranja 021", "Laranja 138", "Laranja 1575", "Laranja 158", "Laranja 1585", "Laranja 172", "Laranja Bretas",
+    "Magenta", "Preto",
+    "Verde 3415", "Verde 3435", "Verde 355", "Verde 356", "Verde 368", "Verde 375", "Verde Bretas",
+    "Vermelho 032", "Vermelho 1795", "Vermelho 185", "Vermelho 191", "Vermelho 200", "Vermelho 355", "Vermelho 361", "Vermelho 485",
+    "Vinho 193"
+];
+
+// ATUALIZAÇÃO: Mudei os nomes "val_..." para "val_..._v2" para ignorar a memória antiga e carregar as listas completas
+let masterData = {
+    operators: JSON.parse(localStorage.getItem("val_operadores_v2")) || defaultOperators,
+    orders: JSON.parse(localStorage.getItem("val_pedidos_v2")) || defaultOrders,
+    inks: JSON.parse(localStorage.getItem("val_tintas_v2")) || defaultInks
+};
+
+let records = JSON.parse(localStorage.getItem("val_historico_v2")) || [];
+
+let currentSession = { active: false, machine: null, operator: null, order: null, selectedColors: [], measuredColors: {} };
+
+function init() {
+    checkAdminAccess();
+    populateMachines();
+    renderMasterData();
+    renderHistory();
+    updateClock();
+    setInterval(updateClock, 1000);
+}
+
+function switchTab(tabId, btn) {
+    document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+    document.getElementById(tabId).classList.add('active');
+    btn.classList.add('active');
+}
+
+function populateMachines() {
+    const select = document.getElementById("machine");
+    select.innerHTML = "";
+    validMachines.forEach(m => {
+        const option = document.createElement("option");
+        option.value = m;
+        option.textContent = `Máquina ${m}`;
+        select.appendChild(option);
+    });
+}
+
+function renderMasterData() {
+    // Salvando na NOVA gaveta de memória v2
+    localStorage.setItem("val_operadores_v2", JSON.stringify(masterData.operators));
+    localStorage.setItem("val_pedidos_v2", JSON.stringify(masterData.orders));
+    localStorage.setItem("val_tintas_v2", JSON.stringify(masterData.inks));
+
+    populateSelect("operator", masterData.operators);
+    
+    const orderDataList = document.getElementById("ordersDataList");
+    orderDataList.innerHTML = "";
+    masterData.orders.forEach(item => {
+        const opt = document.createElement("option");
+        opt.value = item;
+        orderDataList.appendChild(opt);
+    });
+
+    const colorsContainer = document.getElementById("colorCheckboxes");
+    colorsContainer.innerHTML = "";
+    masterData.inks.forEach((ink, idx) => {
+        colorsContainer.innerHTML += `
+            <label class="color-option">
+                <input type="checkbox" value="${ink}" id="ink_${idx}">
+                <span>${ink}</span>
+            </label>
+        `;
+    });
+
+    renderCrudList("operatorsList", masterData.operators, 'operators');
+    renderCrudList("ordersList", masterData.orders, 'orders');
+    renderCrudList("inksList", masterData.inks, 'inks');
+}
+
+function populateSelect(elementId, array) {
+    const el = document.getElementById(elementId);
+    el.innerHTML = "";
+    array.forEach(item => {
+        const opt = document.createElement("option");
+        opt.value = item;
+        opt.textContent = item;
+        el.appendChild(opt);
+    });
+}
+
+function renderCrudList(elementId, array, category) {
+    const list = document.getElementById(elementId);
+    list.innerHTML = "";
+    array.forEach((item, index) => {
+        list.innerHTML += `
+            <li>
+                <span>${item}</span>
+                <button class="delete-btn" onclick="removeMasterData('${category}', ${index})">✕ Rem</button>
+            </li>
+        `;
+    });
+}
+
+function addMasterData(category, inputId) {
+    const input = document.getElementById(inputId);
+    const val = input.value.trim();
+    if (!val) return;
+    masterData[category].push(val);
+    input.value = "";
+    renderMasterData();
+}
+
+function removeMasterData(category, index) {
+    masterData[category].splice(index, 1);
+    renderMasterData();
+}
+
+function addCustomInk() {
+    const input = document.getElementById('customInkInput');
+    const val = input.value.trim();
+    if (!val) return;
+    
+    const container = document.getElementById('colorCheckboxes');
+    const uniqueId = 'custom_ink_' + Date.now();
+    
+    const label = document.createElement('label');
+    label.className = 'color-option';
+    label.innerHTML = `<input type="checkbox" value="${val}" id="${uniqueId}" checked> <span>${val} (Avulso)</span>`;
+    
+    container.appendChild(label);
+    input.value = "";
+}
+
+function startMachineSession() {
+    const orderInput = document.getElementById("order").value.trim();
+    if (!orderInput) { alert("Por favor, selecione ou digite um Pedido/Cliente."); return; }
+
+    const selectedCheckboxes = document.querySelectorAll('#colorCheckboxes input[type="checkbox"]:checked');
+    if (selectedCheckboxes.length === 0) { alert("Selecione ou adicione pelo menos uma cor/tinta para a rodada."); return; }
+
+    const selectedColors = Array.from(selectedCheckboxes).map(cb => cb.value);
+
+    currentSession = {
+        active: true, machine: document.getElementById("machine").value,
+        operator: document.getElementById("operator").value, order: orderInput,
+        selectedColors: selectedColors, measuredColors: {}
+    };
+    updateSessionUI();
+}
+
+function updateSessionUI() {
+    const statusBox = document.getElementById("sessionStatusBox");
+    const activeColorSelect = document.getElementById("activeColorSelect");
+    
+    if (!currentSession.active) return;
+
+    const totalColors = currentSession.selectedColors.length;
+    const measuredCount = Object.keys(currentSession.measuredColors).length;
+    const isFinished = measuredCount === totalColors;
+
+    statusBox.innerHTML = `
+        <div style="display:flex; justify-content: space-between; align-items:center;">
+            <div>
+                <strong>Máquina ${currentSession.machine}</strong><br>
+                <span style="color:var(--accent);">${currentSession.order}</span><br>
+                <small style="color:var(--muted);">Operador: ${currentSession.operator}</small>
+            </div>
+            <div style="text-align: right;">
+                ${isFinished ? '<span class="badge-finished">SESSÃO CONCLUÍDA 🎉</span>' : `<strong>${measuredCount}/${totalColors}</strong><br><small>cores</small>`}
+            </div>
+        </div>
+    `;
+
+    activeColorSelect.innerHTML = "";
+    currentSession.selectedColors.forEach(color => {
+        const isDone = currentSession.measuredColors[color] !== undefined;
+        const opt = document.createElement("option");
+        opt.value = color;
+        opt.textContent = `${color} ${isDone ? '✔ (Registrado)' : ''}`;
+        activeColorSelect.appendChild(opt);
+    });
+
+    activeColorSelect.disabled = false;
+    document.getElementById("viscosity").disabled = false;
+    document.getElementById("saveBtn").disabled = false;
+    document.getElementById("viscosity").focus();
+}
+
+function classify(val) {
+    if (val < MIN) return { key: "below", label: "Abaixo do padrão" };
+    if (val > MAX) return { key: "above", label: "Acima do padrão" };
+    return { key: "ok", label: "Dentro do padrão" };
+}
+
+function updateStatus() {
+    let inputVal = document.getElementById("viscosity").value.replace(',', '.');
+    const val = Number(inputVal);
+    const statusEl = document.getElementById("status");
+
+    if (!Number.isFinite(val) || val <= 0) {
+        statusEl.className = "status";
+        statusEl.innerHTML = `<span class="status-dot"></span><span>Aguardando digitação</span>`;
+        return;
+    }
+
+    const res = classify(val);
+    statusEl.className = `status ${res.key}`;
+    statusEl.innerHTML = `<span class="status-dot"></span><span>${res.label} (Ref: ${MIN}–${MAX}s)</span>`;
+}
+
+function saveRecord() {
+    if (!currentSession.active) { alert("Inicie uma sessão de máquina primeiro."); return; }
+
+    let inputVal = document.getElementById("viscosity").value.replace(',', '.');
+    const val = Number(inputVal);
+    if (!Number.isFinite(val) || val <= 0) { alert("Forneça um tempo de viscosidade válido."); return; }
+
+    const activeColor = document.getElementById("activeColorSelect").value;
+    const res = classify(val);
+    const now = new Date();
+
+    const newRecord = {
+        id: Date.now(), date: now.toLocaleDateString("pt-BR"), time: now.toLocaleTimeString("pt-BR"),
+        machine: currentSession.machine, operator: currentSession.operator,
+        order: currentSession.order, color: activeColor, value: val, status: res.key, label: res.label
+    };
+
+    records.unshift(newRecord);
+    // Salvando o histórico na nova gaveta v2
+    localStorage.setItem("val_historico_v2", JSON.stringify(records));
+
+    currentSession.measuredColors[activeColor] = val;
+
+    renderHistory();
+    document.getElementById("viscosity").value = "";
+    updateStatus();
+    updateSessionUI();
+}
+
+function renderHistory() {
+    const tbody = document.getElementById("historyBody");
+    if (!records.length) {
+        tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; color:var(--muted); padding:30px;">Nenhum registro até o momento.</td></tr>`;
+        return;
+    }
+
+    tbody.innerHTML = records.map(r => `
+        <tr>
+            <td>${r.date}<br><small>${r.time}</small></td>
+            <td>Máq. ${r.machine}</td>
+            <td>${r.operator.split(' ')[0]}</td>
+            <td>${r.order}</td>
+            <td><strong>${r.color}</strong></td>
+            <td><strong>${r.value.toFixed(1).replace(".", ",")} s</strong></td>
+            <td><span class="pill ${r.status}">${r.label}</span></td>
+        </tr>
+    `).join("");
+}
+
+function exportCSV() {
+    if (!records.length) { alert("Não há registros para exportar."); return; }
+
+    const header = ["Data", "Hora", "Máquina", "Operador", "Pedido/Cliente", "Cor/Tinta", "Tempo (s)", "Status"];
+    const rows = records.map(r => [r.date, r.time, r.machine, r.operator, r.order, r.color, r.value.toFixed(1).replace(".", ","), r.label]);
+
+    const csvContent = [header, ...rows].map(e => e.map(val => `"${String(val).replace(/"/g, '""')}"`).join(";")).join("\r\n");
+    const blob = new Blob(["\ufeff" + csvContent], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `viscosidade_valgroup_${new Date().toISOString().slice(0,10)}.csv`;
+    link.click();
+    URL.revokeObjectURL(url);
+}
+
+function clearHistory() {
+    if (!confirm("Deseja apagar todo o histórico acumulado? Esta ação não pode ser desfeita.")) return;
+    records = [];
+    localStorage.removeItem("val_historico_v2");
+    renderHistory();
+}
+
+function updateClock() {
+    const now = new Date();
+    document.getElementById("currentTime").textContent = now.toLocaleTimeString("pt-BR", {hour: '2-digit', minute:'2-digit'});
+}
+
+window.onload = init;
+</script>
+
+</body>
+</html>
