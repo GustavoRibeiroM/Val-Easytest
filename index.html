@@ -16,13 +16,13 @@
     --border: #30353a;
     --text: #f2f4f5;
     --muted: #9ca3a8;
-    --accent: #328F46; 
+    --accent: #e58b2a; 
     --green: #4fc47b;
     --yellow: #e8b84a;
     --red: #e05c5c;
 }
 
-/* TEMA CLARO (Aplicado quando clica no botão) */
+/* TEMA CLARO */
 body.light-theme {
     --bg: #f0f2f5;
     --card: #ffffff;
@@ -30,7 +30,7 @@ body.light-theme {
     --border: #ced4da;
     --text: #1c1e21;
     --muted: #65676b;
-    --accent: #328F46; /* Laranja um pouco mais escuro para dar leitura no fundo branco */
+    --accent: #d97715;
     --green: #28a745;
     --yellow: #d39e00;
     --red: #dc3545;
@@ -109,7 +109,7 @@ p { margin: 0; color: var(--muted); font-size: 13px; }
 
 .tab-btn.active {
     background: var(--accent);
-    color: #fff; /* Fica branco no botão ativo para leitura */
+    color: #fff;
     border-color: var(--accent);
 }
 
@@ -453,50 +453,73 @@ const validMachines = [2319, 2320, 2321, 2322, 2323, 2324, 2325, 2327, 2329, 233
 const MIN = 17;
 const MAX = 21;
 
-// Operadores com a identificação da Turma separada por "|"
+/* LISTAS COMPLETAS (COM SUFIXO DAS TURMAS) */
 const defaultOperators = [
-    "A|1243 - ALYSSON GUNDIM DE SALOMAO", "A|1052 - DANIEL DE SOUZA LEITE", "A|1096 - FABIO FONSECA", 
-    "A|1212 - JOÃO EDUARDO DO CARMO COUTO", "A|1278 - JOAO PEDRO OLIVEIRA DA PALMA", "A|1347 - JOÃO VITOR JUSTINO ANTUNES", 
-    "A|1026 - JOSE RONALDO DOMINGOS", "A|1195 - LEONARDO HENRIQUE MACHADO DA SILVA", "A|1190 - LUCAS CORREA DOS SANTOS", 
-    "A|1351 - LUCIANO LOURENCO FERNANDES", "A|1117 - LUIZ GUSTAVO DE CAMPOS CORREA E CASTRO", "A|1021 - MARCOS ROBERTO NOGUEIRA DOS SANTOS", 
-    "A|1032 - NELSON RIBEIRO DA SILVA", "A|1124 - RAFAEL DE SOUZA GUARDIANO DOS REIS", "A|1227 - RENAN LUIS DA SILVA", 
-    "A|1100 - ROBSON DO CARMO COUTO", "A|1115 - THIAGO BARBOSA SILVA", "A|1394 - THIAGO DOS SANTOS JERONIMO", 
-    "A|1285 - THIAGO RIBEIRO FONSECA", "A|1256 - WELLINGTON RIBEIRO SILVA", 
-    "B|1222 - ALISSON OLIVEIRA DE MARINS", "B|1410 - CARLOS HENRIQUE DE CARVALHO", "B|1286 - EMANUEL FELIPE DE OLIVEIRA FONSECA", 
-    "B|1020 - FABIO ZANIN", "B|1188 - GABRIEL MOTA DE ALMEIDA", "B|1330 - GIAN FONSECA DE SOUZA", 
-    "B|1107 - INALDO HENRIQUE DE OLIVEIRA", "B|1029 - JOSE MAURICIO GUIMARAES NOGUEIRA", "B|1030 - JULIANO DE SOUZA MENEZES", 
-    "B|1213 - MACIEL RIBEIRO CORDEIRO", "B|1031 - MARCIO RIBEIRO SALES", "B|1373 - MATEUS APARECIDO PINTO", 
-    "B|1189 - MATHEUS CARVALHO GONÇALVES", "B|1305 - MESSIAS SANTO DE ALMEIDA", "B|1033 - RAFAEL DE ARAUJO SANTOS", 
-    "B|1176 - RAMON FERNANDES DE NORONHA", "B|1094 - RICARDO MENEZES DOS SANTOS", "B|1093 - VINICIUS DA SILVA VIEIRA", 
-    "B|1151 - WALTER MARINHO ALVES FILHO", 
-    "C|1076 - ADILSON MONTEIRO DE OLIVEIRA", "C|1050 - ALEXANDRE VALDOMIRO PINTO", "C|1072 - EDER DINIZ NATIVIDADE", 
-    "C|1327 - EMANUEL RIBEIRO", "C|1226 - GABRIEL BATISTA DA SILVA", "C|1023 - GILMAR DE OLIVEIRA JOAQUIM", 
-    "C|1025 - JOAO RICARDO DE SIQUEIRA MOTA", "C|1245 - JOÃO VITOR DE SOUZA JACOB", "C|1450 - LORAN", 
-    "C|1223 - LUAN PHELIPE PEDREIRA DE OLIVEIRA", "C|1343 - MARCUS AURELIUS DA SILVA RIBEIRO", "C|1089 - REINALDO MONTEIRO DE OLIVEIRA", 
-    "C|1338 - ROGER HENRIQUE NOBRE", "C|1324 - SAMUEL PAES DOS SANTOS", "C|1064 - SANDRO DE ALMEIDA CHAVES", 
-    "C|1035 - TIAGO FONSECA", "C|1197 - WILLIANS SILVA LEMES", 
-    "D|1120 - ADRIANO CARVALHO LOPES", "D|1022 - AILTON DE JESUS", "D|1317 - CAYO VINICIUS DE JESUS MARCIANO", 
-    "D|1090 - DANILO AUGUSTO DE LIMA MONTEIRO", "D|1406 - DAVID BRENO DE JESUS SANTOS", "D|1357 - EDUARDO RODRIGUES DE SOUZA", 
-    "D|1131 - FLAVIO GALVAO FELICIANO", "D|1385 - HEITOR DE OLIVEIRA ZACARIAS DE SOUZA", "D|1172 - JOÃO LUCAS GONÇALVES SANTANNA", 
-    "D|1329 - JOAO PAULO DA SILVA", "D|1251 - LUIZ MIGUEL LEMES DOS SANTOS", "D|1252 - PAULO CESAR DA SILVA FILHO", 
-    "D|1418 - RAFAEL OLIVEIRA DE ANDRADE", "D|1034 - RODRIGO AMERICO ALEXANDRE", "D|1387 - ROMARIO ROLIM DO AMARAL", 
-    "D|1274 - RUAN CARNEIRO CIPRIANO", "D|1105 - WAGNER LUCAS DE ALMEIDA", "D|1027 - WAGNER RODRIGUES DE SOUZA"
+    "1243 - ALYSSON GUNDIM DE SALOMAO - A", "1052 - DANIEL DE SOUZA LEITE - A", "1096 - FABIO FONSECA - A", 
+    "1212 - JOÃO EDUARDO DO CARMO COUTO - A", "1278 - JOAO PEDRO OLIVEIRA DA PALMA - A", "1347 - JOÃO VITOR JUSTINO ANTUNES - A", 
+    "1026 - JOSE RONALDO DOMINGOS - A", "1195 - LEONARDO HENRIQUE MACHADO DA SILVA - A", "1190 - LUCAS CORREA DOS SANTOS - A", 
+    "1351 - LUCIANO LOURENCO FERNANDES - A", "1117 - LUIZ GUSTAVO DE CAMPOS CORREA E CASTRO - A", "1021 - MARCOS ROBERTO NOGUEIRA DOS SANTOS - A", 
+    "1032 - NELSON RIBEIRO DA SILVA - A", "1124 - RAFAEL DE SOUZA GUARDIANO DOS REIS - A", "1227 - RENAN LUIS DA SILVA - A", 
+    "1100 - ROBSON DO CARMO COUTO - A", "1115 - THIAGO BARBOSA SILVA - A", "1394 - THIAGO DOS SANTOS JERONIMO - A", 
+    "1285 - THIAGO RIBEIRO FONSECA - A", "1256 - WELLINGTON RIBEIRO SILVA - A", 
+    "1222 - ALISSON OLIVEIRA DE MARINS - B", "1410 - CARLOS HENRIQUE DE CARVALHO - B", "1286 - EMANUEL FELIPE DE OLIVEIRA FONSECA - B", 
+    "1020 - FABIO ZANIN - B", "1188 - GABRIEL MOTA DE ALMEIDA - B", "1330 - GIAN FONSECA DE SOUZA - B", 
+    "1107 - INALDO HENRIQUE DE OLIVEIRA - B", "1029 - JOSE MAURICIO GUIMARAES NOGUEIRA - B", "1030 - JULIANO DE SOUZA MENEZES - B", 
+    "1213 - MACIEL RIBEIRO CORDEIRO - B", "1031 - MARCIO RIBEIRO SALES - B", "1373 - MATEUS APARECIDO PINTO - B", 
+    "1189 - MATHEUS CARVALHO GONÇALVES - B", "1305 - MESSIAS SANTO DE ALMEIDA - B", "1033 - RAFAEL DE ARAUJO SANTOS - B", 
+    "1176 - RAMON FERNANDES DE NORONHA - B", "1094 - RICARDO MENEZES DOS SANTOS - B", "1093 - VINICIUS DA SILVA VIEIRA - B", 
+    "1151 - WALTER MARINHO ALVES FILHO - B",
+    "1076 - ADILSON MONTEIRO DE OLIVEIRA - C", "1050 - ALEXANDRE VALDOMIRO PINTO - C", "1072 - EDER DINIZ NATIVIDADE - C", 
+    "1327 - EMANUEL RIBEIRO - C", "1226 - GABRIEL BATISTA DA SILVA - C", "1023 - GILMAR DE OLIVEIRA JOAQUIM - C", 
+    "1025 - JOAO RICARDO DE SIQUEIRA MOTA - C", "1245 - JOÃO VITOR DE SOUZA JACOB - C", "1450 - LORAN - C", 
+    "1223 - LUAN PHELIPE PEDREIRA DE OLIVEIRA - C", "1343 - MARCUS AURELIUS DA SILVA RIBEIRO - C", "1089 - REINALDO MONTEIRO DE OLIVEIRA - C", 
+    "1338 - ROGER HENRIQUE NOBRE - C", "1324 - SAMUEL PAES DOS SANTOS - C", "1064 - SANDRO DE ALMEIDA CHAVES - C", 
+    "1035 - TIAGO FONSECA - C", "1197 - WILLIANS SILVA LEMES - C", 
+    "1120 - ADRIANO CARVALHO LOPES - D", "1022 - AILTON DE JESUS - D", "1317 - CAYO VINICIUS DE JESUS MARCIANO - D", 
+    "1090 - DANILO AUGUSTO DE LIMA MONTEIRO - D", "1406 - DAVID BRENO DE JESUS SANTOS - D", "1357 - EDUARDO RODRIGUES DE SOUZA - D", 
+    "1131 - FLAVIO GALVAO FELICIANO - D", "1385 - HEITOR DE OLIVEIRA ZACARIAS DE SOUZA - D", "1172 - JOÃO LUCAS GONÇALVES SANTANNA - D", 
+    "1329 - JOAO PAULO DA SILVA - D", "1251 - LUIZ MIGUEL LEMES DOS SANTOS - D", "1252 - PAULO CESAR DA SILVA FILHO - D", 
+    "1418 - RAFAEL OLIVEIRA DE ANDRADE - D", "1034 - RODRIGO AMERICO ALEXANDRE - D", "1387 - ROMARIO ROLIM DO AMARAL - D", 
+    "1274 - RUAN CARNEIRO CIPRIANO - D", "1105 - WAGNER LUCAS DE ALMEIDA - D", "1027 - WAGNER RODRIGUES DE SOUZA - D"
 ];
 
-const defaultOrders = JSON.parse(localStorage.getItem("val_pedidos_v3")) || ["Atacadão", "Carrefour", "Assaí"];
-const defaultInks = JSON.parse(localStorage.getItem("val_tintas_v3")) || ["Amarelo 012", "Azul 072", "Branco"];
+const defaultOrders = [
+    "ABC", "Amarelinha", "Amigão", "Angeloni", "Assaí", "Atacadão", "Atakarejo", "Bahamas", "Bem Barato", 
+    "Big Compra", "Boa Super", "BobSak Pack", "Branca Semar", "Brasil Atacadista", "CA Hiper", "Casa Avenida", 
+    "Cofesa", "Comercial Esperança", "Comesp", "Cordeiro Atacado", "Covabra Sul", "Dia %", "Dia Brasil", 
+    "Extra Plus", "Farma Ponte", "Guanabara", "Koch Komprão", "Lixo Reciclável", "Macromix Atacado", "Marron 7533", 
+    "Max Rede", "MaxFort", "Mundial", "P.A Novo", "Parana", "Plástico Verde", "Proença", "Rede 20", "Rede Bom Lugar", 
+    "Redefort", "Reis", "Rissul", "Sams Club", "São Judas Tadeu", "SM Archer", "Spani", "Spani Atakadista", 
+    "St. Marche", "Super Atacadão", "Super BH", "Super Estrela", "Super Golf", "Super Mais", "Super Tauste", 
+    "Tonin", "Varejão Saúde", "Volte Sempre", "Zaffari", "Zé Delivery", "Bom Dia", "Bob Impratacadão", "Coosuper", 
+    "Unisuper", "Carrefour", "Shibata", "Fort Atacadista", "Prezunic", "SAC", "Alvorada", "Sac VLT", "Supermercado Reis", 
+    "Super 88", "Pague Menos", "SP Market", "Forte Mix", "Ville Fort", "Big Mart", "Sac RJ", "Porecatu"
+];
 
+const defaultInks = [
+    "Amarelo 012", "Amarelo 109", "Amarelo 116", "Amarelo 137", "Amarelo 2017", "Amarelo 6003", "Amarelo 803",
+    "Azul 072", "Azul 243", "Azul 2746", "Azul 2747", "Azul 2766", "Azul 2767", "Azul 288", "Azul 2935", "Azul 2955", 
+    "Azul 534", "Azul 541", "Azul 661", "Azul 662", "Azul 672", "Azul Condor", "Azul Cyan", "Azul Ponte", "Azul Reflex", "Azul Shibata",
+    "Branco", "Cinza",
+    "Laranja 021", "Laranja 138", "Laranja 1575", "Laranja 158", "Laranja 1585", "Laranja 172", "Laranja Bretas",
+    "Magenta", "Preto",
+    "Verde 3415", "Verde 3435", "Verde 355", "Verde 356", "Verde 368", "Verde 375", "Verde Bretas",
+    "Vermelho 032", "Vermelho 1795", "Vermelho 185", "Vermelho 191", "Vermelho 200", "Vermelho 355", "Vermelho 361", "Vermelho 485",
+    "Vinho 193"
+];
+
+// Usando as variáveis da versão final "v4" para evitar conflito na memória
 let masterData = {
-    operators: defaultOperators,
-    orders: defaultOrders,
-    inks: defaultInks
+    operators: JSON.parse(localStorage.getItem("val_operadores_v4")) || defaultOperators,
+    orders: JSON.parse(localStorage.getItem("val_pedidos_v4")) || defaultOrders,
+    inks: JSON.parse(localStorage.getItem("val_tintas_v4")) || defaultInks
 };
 
-let records = JSON.parse(localStorage.getItem("val_historico_v3")) || [];
+let records = JSON.parse(localStorage.getItem("val_historico_v4")) || [];
 let currentSession = { active: false, machine: null, operator: null, order: null, selectedColors: [], measuredColors: {} };
 
 function init() {
-    initTheme(); // Inicia o tema logo que a página carrega
+    initTheme();
     checkAdminAccess();
     populateMachines();
     renderMasterData();
@@ -529,22 +552,22 @@ function renderOperatorsList() {
     operatorSelect.innerHTML = "";
     
     masterData.operators.forEach(op => {
-        // Se for "ALL", mostra todos. Se não, verifica se o final do nome bate com a turma (ex: " - A")
         if (filtro === "ALL" || op.endsWith(`- ${filtro}`)) {
             const option = document.createElement("option");
             option.value = op;
-            option.textContent = op;
+            // Exibe sem o sufixo no menu, mas mantém o valor para o sistema
+            option.textContent = op.replace(` - ${filtro}`, '');
             operatorSelect.appendChild(option);
         }
     });
 }
 
 function renderMasterData() {
-    localStorage.setItem("val_operadores_v3", JSON.stringify(masterData.operators));
-    localStorage.setItem("val_pedidos_v3", JSON.stringify(masterData.orders));
-    localStorage.setItem("val_tintas_v3", JSON.stringify(masterData.inks));
+    localStorage.setItem("val_operadores_v4", JSON.stringify(masterData.operators));
+    localStorage.setItem("val_pedidos_v4", JSON.stringify(masterData.orders));
+    localStorage.setItem("val_tintas_v4", JSON.stringify(masterData.inks));
 
-    renderOperatorsList(); // Carrega os operadores com base no filtro atual
+    renderOperatorsList();
     
     const orderDataList = document.getElementById("ordersDataList");
     orderDataList.innerHTML = "";
@@ -640,12 +663,15 @@ function updateSessionUI() {
     const measuredCount = Object.keys(currentSession.measuredColors).length;
     const isFinished = measuredCount === totalColors;
 
+    // Pega o nome do operador formatado sem a matrícula e sem a turma para ficar bonito no resumo
+    const operatorName = currentSession.operator.split('-')[1] ? currentSession.operator.split('-')[1].trim() : currentSession.operator;
+
     statusBox.innerHTML = `
         <div style="display:flex; justify-content: space-between; align-items:center;">
             <div>
                 <strong>Máquina ${currentSession.machine}</strong><br>
                 <span style="color:var(--accent);">${currentSession.order}</span><br>
-                <small style="color:var(--muted);">Operador: ${currentSession.operator.split('-')[0]}</small>
+                <small style="color:var(--muted);">Operador: ${operatorName}</small>
             </div>
             <div style="text-align: right;">
                 ${isFinished ? '<span class="badge-finished">SESSÃO CONCLUÍDA 🎉</span>' : `<strong>${measuredCount}/${totalColors}</strong><br><small>cores</small>`}
@@ -708,7 +734,7 @@ function saveRecord() {
     };
 
     records.unshift(newRecord);
-    localStorage.setItem("val_historico_v3", JSON.stringify(records));
+    localStorage.setItem("val_historico_v4", JSON.stringify(records));
 
     currentSession.measuredColors[activeColor] = val;
 
@@ -725,24 +751,37 @@ function renderHistory() {
         return;
     }
 
-    tbody.innerHTML = records.map(r => `
+    tbody.innerHTML = records.map(r => {
+        // Limpar o nome para o histórico (Exibe só o primeiro e segundo nome)
+        let opName = r.operator;
+        if(opName.includes('-')) {
+            const nameParts = opName.split('-')[1].trim().split(' ');
+            opName = nameParts[0] + (nameParts[1] ? ' ' + nameParts[1] : '');
+        }
+
+        return `
         <tr>
             <td>${r.date}<br><small>${r.time}</small></td>
             <td>Máq. ${r.machine}</td>
-            <td>${r.operator.split('-')[0]}</td>
+            <td>${opName}</td>
             <td>${r.order}</td>
             <td><strong>${r.color}</strong></td>
             <td><strong>${r.value.toFixed(1).replace(".", ",")} s</strong></td>
             <td><span class="pill ${r.status}">${r.label}</span></td>
         </tr>
-    `).join("");
+        `;
+    }).join("");
 }
 
 function exportCSV() {
     if (!records.length) { alert("Não há registros para exportar."); return; }
 
     const header = ["Data", "Hora", "Máquina", "Operador", "Pedido/Cliente", "Cor/Tinta", "Tempo (s)", "Status"];
-    const rows = records.map(r => [r.date, r.time, r.machine, r.operator.split('-')[0].trim(), r.order, r.color, r.value.toFixed(1).replace(".", ","), r.label]);
+    const rows = records.map(r => {
+        // Formatar o nome do operador para a planilha (sem o traço da turma no final)
+        const opPlanilha = r.operator.replace(/ - [A-D]$/, '').trim();
+        return [r.date, r.time, r.machine, opPlanilha, r.order, r.color, r.value.toFixed(1).replace(".", ","), r.label];
+    });
 
     const csvContent = [header, ...rows].map(e => e.map(val => `"${String(val).replace(/"/g, '""')}"`).join(";")).join("\r\n");
     const blob = new Blob(["\ufeff" + csvContent], { type: "text/csv;charset=utf-8;" });
@@ -757,7 +796,7 @@ function exportCSV() {
 function clearHistory() {
     if (!confirm("Deseja apagar todo o histórico acumulado? Esta ação não pode ser desfeita.")) return;
     records = [];
-    localStorage.removeItem("val_historico_v3");
+    localStorage.removeItem("val_historico_v4");
     renderHistory();
 }
 
