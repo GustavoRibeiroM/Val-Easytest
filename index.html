@@ -8,7 +8,6 @@
 <style>
 * { box-sizing: border-box; }
 
-/* TEMA ESCURO (PADRÃO) */
 :root {
     --bg: #111315;
     --card: #1a1d20;
@@ -16,24 +15,10 @@
     --border: #30353a;
     --text: #f2f4f5;
     --muted: #9ca3a8;
-    --accent: #e58b2a; 
+    --accent: #10b981;
     --green: #4fc47b;
     --yellow: #e8b84a;
     --red: #e05c5c;
-}
-
-/* TEMA CLARO */
-body.light-theme {
-    --bg: #f0f2f5;
-    --card: #ffffff;
-    --card2: #e4e6e9;
-    --border: #ced4da;
-    --text: #1c1e21;
-    --muted: #65676b;
-    --accent: #d97715;
-    --green: #28a745;
-    --yellow: #d39e00;
-    --red: #dc3545;
 }
 
 body {
@@ -41,7 +26,6 @@ body {
     background: var(--bg);
     color: var(--text);
     font-family: Arial, sans-serif;
-    transition: background-color 0.3s, color 0.3s;
 }
 
 .app {
@@ -68,12 +52,6 @@ header {
 
 h1 { margin: 5px 0; font-size: 26px; }
 p { margin: 0; color: var(--muted); font-size: 13px; }
-
-.header-controls {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
 
 .clock {
     color: var(--muted);
@@ -109,7 +87,7 @@ p { margin: 0; color: var(--muted); font-size: 13px; }
 
 .tab-btn.active {
     background: var(--accent);
-    color: #fff;
+    color: #1C1C69;
     border-color: var(--accent);
 }
 
@@ -126,14 +104,13 @@ p { margin: 0; color: var(--muted); font-size: 13px; }
     border-radius: 16px;
     padding: 24px;
     margin-bottom: 18px;
-    transition: background-color 0.3s, border-color 0.3s;
 }
 
 h2 { margin: 0 0 10px; font-size: 20px; }
 
 label {
     display: block;
-    color: var(--muted);
+    color: #c8cdd0;
     font-size: 14px;
     font-weight: bold;
     margin: 18px 0 8px;
@@ -148,7 +125,6 @@ select, input {
     padding: 16px; 
     font-size: 16px;
     outline: none;
-    transition: background-color 0.3s, color 0.3s, border-color 0.3s;
 }
 
 select:focus, input:focus { border-color: var(--accent); }
@@ -185,13 +161,13 @@ select:focus, input:focus { border-color: var(--accent); }
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background: var(--card2);
+    background: #151719;
     border: 1px solid var(--border);
     border-radius: 9px;
     padding: 12px 15px;
     margin-top: 12px;
     font-size: 14px;
-    color: var(--text);
+    color: var(--muted);
 }
 
 button {
@@ -201,15 +177,13 @@ button {
     font-size: 15px;
     font-weight: bold;
     cursor: pointer;
-    transition: background-color 0.2s, opacity 0.2s;
 }
 button:disabled { opacity: .45; cursor: not-allowed; }
 
-.primary { background: var(--accent); color: #fff; }
-.secondary { background: var(--card2); color: var(--text); border: 1px solid var(--border); }
-.ghost { background: transparent; color: var(--text); border: 1px solid var(--border); padding: 8px 12px; font-size: 18px;}
-.save { width: 100%; background: var(--green); color: #fff; margin-top: 20px; padding: 18px; font-size: 16px; }
-.danger { background: var(--red); color: #fff; }
+.primary { background: var(--accent); color: #111; }
+.secondary { background: #2a2f34; color: var(--text); border: 1px solid var(--border); }
+.save { width: 100%; background: var(--green); color: #101512; margin-top: 20px; padding: 18px; font-size: 16px; }
+.danger { background: #382326; color: #f29a9a; }
 
 .status {
     display: flex;
@@ -218,7 +192,7 @@ button:disabled { opacity: .45; cursor: not-allowed; }
     margin-top: 15px;
     padding: 14px 15px;
     border-radius: 9px;
-    background: var(--card2);
+    background: #202428;
     color: var(--muted);
     font-size: 15px;
     font-weight: bold;
@@ -235,21 +209,21 @@ button:disabled { opacity: .45; cursor: not-allowed; }
 .crud-group { display: flex; gap: 8px; margin-bottom: 12px; }
 .crud-list { list-style: none; padding: 0; margin: 0; max-height: 200px; overflow-y: auto; }
 .crud-list li { display: flex; justify-content: space-between; align-items: center; background: var(--card2); border: 1px solid var(--border); padding: 10px 15px; border-radius: 8px; margin-bottom: 6px; font-size: 14px; }
-.delete-btn { background: transparent; color: var(--red); border: none; padding: 5px; font-size: 13px; cursor: pointer; font-weight: bold; }
+.delete-btn { background: transparent; color: var(--red); border: none; padding: 5px; font-size: 13px; cursor: pointer; }
 
 /* TABELAS E BADGES */
 .table-container { overflow-x: auto; margin-top: 15px; }
 table { width: 100%; border-collapse: collapse; min-width: 650px; }
 th { color: var(--muted); font-size: 12px; text-align: left; padding: 12px; border-bottom: 1px solid var(--border); }
-td { padding: 12px; border-bottom: 1px solid var(--border); font-size: 14px; }
+td { padding: 12px; border-bottom: 1px solid #282d31; font-size: 14px; }
 
-.pill { display: inline-block; padding: 6px 10px; border-radius: 20px; font-size: 12px; font-weight: bold; color: #fff; }
-.pill.ok { background: var(--green); }
-.pill.below { background: var(--yellow); color: #111; }
-.pill.above { background: var(--red); }
+.pill { display: inline-block; padding: 6px 10px; border-radius: 20px; font-size: 12px; font-weight: bold; }
+.pill.ok { background: #193324; color: var(--green); }
+.pill.below { background: #382f1a; color: var(--yellow); }
+.pill.above { background: #3a2023; color: var(--red); }
 
-.session-progress { background: var(--card2); border: 1px solid var(--border); padding: 16px; border-radius: 9px; margin-bottom: 20px; }
-.badge-finished { background: var(--green); color: #fff; padding: 6px 10px; border-radius: 6px; font-size: 13px; font-weight: bold; }
+.session-progress { background: #151719; border: 1px solid var(--border); padding: 16px; border-radius: 9px; margin-bottom: 20px; }
+.badge-finished { background: var(--green); color: #101512; padding: 6px 10px; border-radius: 6px; font-size: 13px; font-weight: bold; }
 
 footer { text-align: center; margin-top: 30px; font-size: 12px; color: var(--muted); }
 </style>
@@ -263,12 +237,7 @@ footer { text-align: center; margin-top: 30px; font-size: 12px; color: var(--mut
         <span class="eyebrow">VALGROUP • CONTROLE DE PRODUÇÃO</span>
         <h1>Viscosidade de Tintas</h1>
     </div>
-    
-    <div class="header-controls">
-        <!-- BOTÃO DE TEMA CLARO/ESCURO -->
-        <button class="ghost" id="themeToggleBtn" onclick="toggleTheme()" title="Alternar Tema">☀️</button>
-        <div class="clock" id="currentTime">--:--</div>
-    </div>
+    <div class="clock" id="currentTime">--:--</div>
 </header>
 
 <!-- ABAS DE NAVEGAÇÃO -->
@@ -282,13 +251,14 @@ footer { text-align: center; margin-top: 30px; font-size: 12px; color: var(--mut
 <section id="measurementTab" class="tab-content active">
     <div class="grid">
         <div class="card">
-            <h2>1. Configurar Sessão</h2>
+            <h2>1. Configurar Sessão da Máquina</h2>
             
             <label for="machine">Máquina</label>
             <select id="machine"></select>
 
-            <label for="turmaFilter">Filtro de Turma</label>
-            <select id="turmaFilter" onchange="renderOperatorsList()">
+            <!-- NOVO FILTRO DE TURMA -->
+            <label for="teamFilter">Turma</label>
+            <select id="teamFilter" onchange="renderOperators()">
                 <option value="ALL">Todas as Turmas</option>
                 <option value="A">Turma A</option>
                 <option value="B">Turma B</option>
@@ -300,7 +270,7 @@ footer { text-align: center; margin-top: 30px; font-size: 12px; color: var(--mut
             <select id="operator"></select>
 
             <label for="order">Pedido / Cliente</label>
-            <input type="text" id="order" list="ordersDataList" placeholder="Selecione na lista ou digite...">
+            <input type="text" id="order" list="ordersDataList" placeholder="Selecione na lista ou digite um novo...">
             <datalist id="ordersDataList"></datalist>
 
             <label>Selecione as Cores da Rodada</label>
@@ -312,7 +282,7 @@ footer { text-align: center; margin-top: 30px; font-size: 12px; color: var(--mut
             </div>
 
             <button class="primary" style="width:100%; margin-top:25px;" onclick="startMachineSession()">
-                🚀 Iniciar Sessão da Máquina
+                🎛️ Iniciar Sessão da Máquina
             </button>
         </div>
 
@@ -349,9 +319,9 @@ footer { text-align: center; margin-top: 30px; font-size: 12px; color: var(--mut
     <div class="grid">
         <div class="card">
             <h2>Cadastrar Operadores</h2>
-            <p style="margin-bottom:10px;">Formato sugerido: MATRÍCULA - NOME - TURMA</p>
+            <p style="margin-bottom:10px;">Adicione no formato "Turma|Matricula - Nome".</p>
             <div class="crud-group">
-                <input type="text" id="newOperatorInput" placeholder="Ex: 1234 - JOAO - B">
+                <input type="text" id="newOperatorInput" placeholder="Ex: A|104 - João">
                 <button class="primary" onclick="addMasterData('operators', 'newOperatorInput')">Adicionar</button>
             </div>
             <ul class="crud-list" id="operatorsList"></ul>
@@ -359,6 +329,7 @@ footer { text-align: center; margin-top: 30px; font-size: 12px; color: var(--mut
 
         <div class="card">
             <h2>Cadastrar Pedidos (Fixo)</h2>
+            <p style="margin-bottom:10px;">Adicione à lista permanente.</p>
             <div class="crud-group">
                 <input type="text" id="newOrderInput" placeholder="Ex: Atacadão - Pedido #402">
                 <button class="primary" onclick="addMasterData('orders', 'newOrderInput')">Adicionar</button>
@@ -368,6 +339,7 @@ footer { text-align: center; margin-top: 30px; font-size: 12px; color: var(--mut
 
         <div class="card">
             <h2>Catálogo de Tintas (Fixo)</h2>
+            <p style="margin-bottom:10px;">Cadastre as tintas na lista permanente.</p>
             <div class="crud-group">
                 <input type="text" id="newInkInput" placeholder="Ex: Vermelho 485">
                 <button class="primary" onclick="addMasterData('inks', 'newInkInput')">Adicionar</button>
@@ -413,34 +385,7 @@ footer { text-align: center; margin-top: 30px; font-size: 12px; color: var(--mut
 </main>
 
 <script>
-/* GERENCIAMENTO DO TEMA (CLARO/ESCURO) */
-function initTheme() {
-    const savedTheme = localStorage.getItem('val_theme');
-    const btn = document.getElementById('themeToggleBtn');
-    
-    if (savedTheme === 'light') {
-        document.body.classList.add('light-theme');
-        btn.textContent = '🌙';
-    } else {
-        btn.textContent = '☀️';
-    }
-}
-
-function toggleTheme() {
-    document.body.classList.toggle('light-theme');
-    const isLight = document.body.classList.contains('light-theme');
-    const btn = document.getElementById('themeToggleBtn');
-    
-    if (isLight) {
-        localStorage.setItem('val_theme', 'light');
-        btn.textContent = '🌙';
-    } else {
-        localStorage.setItem('val_theme', 'dark');
-        btn.textContent = '☀️';
-    }
-}
-
-/* VERIFICAÇÃO DO MODO ADMIN (Link Secreto) */
+/* VERIFICAÇÃO DO MODO ADMIN */
 function checkAdminAccess() {
     const urlParams = new URLSearchParams(window.location.search);
     if (urlParams.get('admin') === 'valgroup2026') {
@@ -453,34 +398,34 @@ const validMachines = [2319, 2320, 2321, 2322, 2323, 2324, 2325, 2327, 2329, 233
 const MIN = 17;
 const MAX = 21;
 
-/* LISTAS COMPLETAS (COM SUFIXO DAS TURMAS) */
+// Operadores com a identificação da Turma separada por "|"
 const defaultOperators = [
-    "1243 - ALYSSON GUNDIM DE SALOMAO - A", "1052 - DANIEL DE SOUZA LEITE - A", "1096 - FABIO FONSECA - A", 
-    "1212 - JOÃO EDUARDO DO CARMO COUTO - A", "1278 - JOAO PEDRO OLIVEIRA DA PALMA - A", "1347 - JOÃO VITOR JUSTINO ANTUNES - A", 
-    "1026 - JOSE RONALDO DOMINGOS - A", "1195 - LEONARDO HENRIQUE MACHADO DA SILVA - A", "1190 - LUCAS CORREA DOS SANTOS - A", 
-    "1351 - LUCIANO LOURENCO FERNANDES - A", "1117 - LUIZ GUSTAVO DE CAMPOS CORREA E CASTRO - A", "1021 - MARCOS ROBERTO NOGUEIRA DOS SANTOS - A", 
-    "1032 - NELSON RIBEIRO DA SILVA - A", "1124 - RAFAEL DE SOUZA GUARDIANO DOS REIS - A", "1227 - RENAN LUIS DA SILVA - A", 
-    "1100 - ROBSON DO CARMO COUTO - A", "1115 - THIAGO BARBOSA SILVA - A", "1394 - THIAGO DOS SANTOS JERONIMO - A", 
-    "1285 - THIAGO RIBEIRO FONSECA - A", "1256 - WELLINGTON RIBEIRO SILVA - A", 
-    "1222 - ALISSON OLIVEIRA DE MARINS - B", "1410 - CARLOS HENRIQUE DE CARVALHO - B", "1286 - EMANUEL FELIPE DE OLIVEIRA FONSECA - B", 
-    "1020 - FABIO ZANIN - B", "1188 - GABRIEL MOTA DE ALMEIDA - B", "1330 - GIAN FONSECA DE SOUZA - B", 
-    "1107 - INALDO HENRIQUE DE OLIVEIRA - B", "1029 - JOSE MAURICIO GUIMARAES NOGUEIRA - B", "1030 - JULIANO DE SOUZA MENEZES - B", 
-    "1213 - MACIEL RIBEIRO CORDEIRO - B", "1031 - MARCIO RIBEIRO SALES - B", "1373 - MATEUS APARECIDO PINTO - B", 
-    "1189 - MATHEUS CARVALHO GONÇALVES - B", "1305 - MESSIAS SANTO DE ALMEIDA - B", "1033 - RAFAEL DE ARAUJO SANTOS - B", 
-    "1176 - RAMON FERNANDES DE NORONHA - B", "1094 - RICARDO MENEZES DOS SANTOS - B", "1093 - VINICIUS DA SILVA VIEIRA - B", 
-    "1151 - WALTER MARINHO ALVES FILHO - B",
-    "1076 - ADILSON MONTEIRO DE OLIVEIRA - C", "1050 - ALEXANDRE VALDOMIRO PINTO - C", "1072 - EDER DINIZ NATIVIDADE - C", 
-    "1327 - EMANUEL RIBEIRO - C", "1226 - GABRIEL BATISTA DA SILVA - C", "1023 - GILMAR DE OLIVEIRA JOAQUIM - C", 
-    "1025 - JOAO RICARDO DE SIQUEIRA MOTA - C", "1245 - JOÃO VITOR DE SOUZA JACOB - C", "1450 - LORAN - C", 
-    "1223 - LUAN PHELIPE PEDREIRA DE OLIVEIRA - C", "1343 - MARCUS AURELIUS DA SILVA RIBEIRO - C", "1089 - REINALDO MONTEIRO DE OLIVEIRA - C", 
-    "1338 - ROGER HENRIQUE NOBRE - C", "1324 - SAMUEL PAES DOS SANTOS - C", "1064 - SANDRO DE ALMEIDA CHAVES - C", 
-    "1035 - TIAGO FONSECA - C", "1197 - WILLIANS SILVA LEMES - C", 
-    "1120 - ADRIANO CARVALHO LOPES - D", "1022 - AILTON DE JESUS - D", "1317 - CAYO VINICIUS DE JESUS MARCIANO - D", 
-    "1090 - DANILO AUGUSTO DE LIMA MONTEIRO - D", "1406 - DAVID BRENO DE JESUS SANTOS - D", "1357 - EDUARDO RODRIGUES DE SOUZA - D", 
-    "1131 - FLAVIO GALVAO FELICIANO - D", "1385 - HEITOR DE OLIVEIRA ZACARIAS DE SOUZA - D", "1172 - JOÃO LUCAS GONÇALVES SANTANNA - D", 
-    "1329 - JOAO PAULO DA SILVA - D", "1251 - LUIZ MIGUEL LEMES DOS SANTOS - D", "1252 - PAULO CESAR DA SILVA FILHO - D", 
-    "1418 - RAFAEL OLIVEIRA DE ANDRADE - D", "1034 - RODRIGO AMERICO ALEXANDRE - D", "1387 - ROMARIO ROLIM DO AMARAL - D", 
-    "1274 - RUAN CARNEIRO CIPRIANO - D", "1105 - WAGNER LUCAS DE ALMEIDA - D", "1027 - WAGNER RODRIGUES DE SOUZA - D"
+    "A|1243 - ALYSSON GUNDIM DE SALOMAO", "A|1052 - DANIEL DE SOUZA LEITE", "A|1096 - FABIO FONSECA", 
+    "A|1212 - JOÃO EDUARDO DO CARMO COUTO", "A|1278 - JOAO PEDRO OLIVEIRA DA PALMA", "A|1347 - JOÃO VITOR JUSTINO ANTUNES", 
+    "A|1026 - JOSE RONALDO DOMINGOS", "A|1195 - LEONARDO HENRIQUE MACHADO DA SILVA", "A|1190 - LUCAS CORREA DOS SANTOS", 
+    "A|1351 - LUCIANO LOURENCO FERNANDES", "A|1117 - LUIZ GUSTAVO DE CAMPOS CORREA E CASTRO", "A|1021 - MARCOS ROBERTO NOGUEIRA DOS SANTOS", 
+    "A|1032 - NELSON RIBEIRO DA SILVA", "A|1124 - RAFAEL DE SOUZA GUARDIANO DOS REIS", "A|1227 - RENAN LUIS DA SILVA", 
+    "A|1100 - ROBSON DO CARMO COUTO", "A|1115 - THIAGO BARBOSA SILVA", "A|1394 - THIAGO DOS SANTOS JERONIMO", 
+    "A|1285 - THIAGO RIBEIRO FONSECA", "A|1256 - WELLINGTON RIBEIRO SILVA", 
+    "B|1222 - ALISSON OLIVEIRA DE MARINS", "B|1410 - CARLOS HENRIQUE DE CARVALHO", "B|1286 - EMANUEL FELIPE DE OLIVEIRA FONSECA", 
+    "B|1020 - FABIO ZANIN", "B|1188 - GABRIEL MOTA DE ALMEIDA", "B|1330 - GIAN FONSECA DE SOUZA", 
+    "B|1107 - INALDO HENRIQUE DE OLIVEIRA", "B|1029 - JOSE MAURICIO GUIMARAES NOGUEIRA", "B|1030 - JULIANO DE SOUZA MENEZES", 
+    "B|1213 - MACIEL RIBEIRO CORDEIRO", "B|1031 - MARCIO RIBEIRO SALES", "B|1373 - MATEUS APARECIDO PINTO", 
+    "B|1189 - MATHEUS CARVALHO GONÇALVES", "B|1305 - MESSIAS SANTO DE ALMEIDA", "B|1033 - RAFAEL DE ARAUJO SANTOS", 
+    "B|1176 - RAMON FERNANDES DE NORONHA", "B|1094 - RICARDO MENEZES DOS SANTOS", "B|1093 - VINICIUS DA SILVA VIEIRA", 
+    "B|1151 - WALTER MARINHO ALVES FILHO", 
+    "C|1076 - ADILSON MONTEIRO DE OLIVEIRA", "C|1050 - ALEXANDRE VALDOMIRO PINTO", "C|1072 - EDER DINIZ NATIVIDADE", 
+    "C|1327 - EMANUEL RIBEIRO", "C|1226 - GABRIEL BATISTA DA SILVA", "C|1023 - GILMAR DE OLIVEIRA JOAQUIM", 
+    "C|1025 - JOAO RICARDO DE SIQUEIRA MOTA", "C|1245 - JOÃO VITOR DE SOUZA JACOB", "C|1450 - LORAN", 
+    "C|1223 - LUAN PHELIPE PEDREIRA DE OLIVEIRA", "C|1343 - MARCUS AURELIUS DA SILVA RIBEIRO", "C|1089 - REINALDO MONTEIRO DE OLIVEIRA", 
+    "C|1338 - ROGER HENRIQUE NOBRE", "C|1324 - SAMUEL PAES DOS SANTOS", "C|1064 - SANDRO DE ALMEIDA CHAVES", 
+    "C|1035 - TIAGO FONSECA", "C|1197 - WILLIANS SILVA LEMES", 
+    "D|1120 - ADRIANO CARVALHO LOPES", "D|1022 - AILTON DE JESUS", "D|1317 - CAYO VINICIUS DE JESUS MARCIANO", 
+    "D|1090 - DANILO AUGUSTO DE LIMA MONTEIRO", "D|1406 - DAVID BRENO DE JESUS SANTOS", "D|1357 - EDUARDO RODRIGUES DE SOUZA", 
+    "D|1131 - FLAVIO GALVAO FELICIANO", "D|1385 - HEITOR DE OLIVEIRA ZACARIAS DE SOUZA", "D|1172 - JOÃO LUCAS GONÇALVES SANTANNA", 
+    "D|1329 - JOAO PAULO DA SILVA", "D|1251 - LUIZ MIGUEL LEMES DOS SANTOS", "D|1252 - PAULO CESAR DA SILVA FILHO", 
+    "D|1418 - RAFAEL OLIVEIRA DE ANDRADE", "D|1034 - RODRIGO AMERICO ALEXANDRE", "D|1387 - ROMARIO ROLIM DO AMARAL", 
+    "D|1274 - RUAN CARNEIRO CIPRIANO", "D|1105 - WAGNER LUCAS DE ALMEIDA", "D|1027 - WAGNER RODRIGUES DE SOUZA"
 ];
 
 const defaultOrders = [
@@ -508,18 +453,17 @@ const defaultInks = [
     "Vinho 193"
 ];
 
-// Usando as variáveis da versão final "v4" para evitar conflito na memória
 let masterData = {
-    operators: JSON.parse(localStorage.getItem("val_operadores_v4")) || defaultOperators,
-    orders: JSON.parse(localStorage.getItem("val_pedidos_v4")) || defaultOrders,
-    inks: JSON.parse(localStorage.getItem("val_tintas_v4")) || defaultInks
+    operators: JSON.parse(localStorage.getItem("val_operadores_v3")) || defaultOperators,
+    orders: JSON.parse(localStorage.getItem("val_pedidos_v3")) || defaultOrders,
+    inks: JSON.parse(localStorage.getItem("val_tintas_v3")) || defaultInks
 };
 
-let records = JSON.parse(localStorage.getItem("val_historico_v4")) || [];
+let records = JSON.parse(localStorage.getItem("val_historico_v3")) || [];
+
 let currentSession = { active: false, machine: null, operator: null, order: null, selectedColors: [], measuredColors: {} };
 
 function init() {
-    initTheme();
     checkAdminAccess();
     populateMachines();
     renderMasterData();
@@ -546,28 +490,31 @@ function populateMachines() {
     });
 }
 
-function renderOperatorsList() {
-    const filtro = document.getElementById("turmaFilter").value;
-    const operatorSelect = document.getElementById("operator");
-    operatorSelect.innerHTML = "";
+function renderOperators() {
+    const teamFilter = document.getElementById("teamFilter").value;
+    const select = document.getElementById("operator");
+    select.innerHTML = "";
     
     masterData.operators.forEach(op => {
-        if (filtro === "ALL" || op.endsWith(`- ${filtro}`)) {
+        const parts = op.split('|');
+        const team = parts.length > 1 ? parts[0].trim() : 'Outros';
+        const name = parts.length > 1 ? parts[1].trim() : op;
+
+        if (teamFilter === "ALL" || teamFilter === team) {
             const option = document.createElement("option");
-            option.value = op;
-            // Exibe sem o sufixo no menu, mas mantém o valor para o sistema
-            option.textContent = op.replace(` - ${filtro}`, '');
-            operatorSelect.appendChild(option);
+            option.value = name; 
+            option.textContent = name;
+            select.appendChild(option);
         }
     });
 }
 
 function renderMasterData() {
-    localStorage.setItem("val_operadores_v4", JSON.stringify(masterData.operators));
-    localStorage.setItem("val_pedidos_v4", JSON.stringify(masterData.orders));
-    localStorage.setItem("val_tintas_v4", JSON.stringify(masterData.inks));
+    localStorage.setItem("val_operadores_v3", JSON.stringify(masterData.operators));
+    localStorage.setItem("val_pedidos_v3", JSON.stringify(masterData.orders));
+    localStorage.setItem("val_tintas_v3", JSON.stringify(masterData.inks));
 
-    renderOperatorsList();
+    renderOperators(); 
     
     const orderDataList = document.getElementById("ordersDataList");
     orderDataList.innerHTML = "";
@@ -608,7 +555,7 @@ function renderCrudList(elementId, array, category) {
 
 function addMasterData(category, inputId) {
     const input = document.getElementById(inputId);
-    const val = input.value.trim().toUpperCase();
+    const val = input.value.trim();
     if (!val) return;
     masterData[category].push(val);
     input.value = "";
@@ -657,21 +604,28 @@ function updateSessionUI() {
     const statusBox = document.getElementById("sessionStatusBox");
     const activeColorSelect = document.getElementById("activeColorSelect");
     
-    if (!currentSession.active) return;
+    // NOVO: Resetar o painel caso a sessão não esteja ativa
+    if (!currentSession.active) {
+        statusBox.innerHTML = `<span style="color:var(--muted); font-size:14px;">Nenhuma sessão ativa. Inicie acima.</span>`;
+        activeColorSelect.innerHTML = "";
+        activeColorSelect.disabled = true;
+        document.getElementById("viscosity").disabled = true;
+        document.getElementById("saveBtn").disabled = true;
+        document.getElementById("status").className = "status";
+        document.getElementById("status").innerHTML = `<span class="status-dot"></span><span>Aguardando digitação</span>`;
+        return;
+    }
 
     const totalColors = currentSession.selectedColors.length;
     const measuredCount = Object.keys(currentSession.measuredColors).length;
     const isFinished = measuredCount === totalColors;
-
-    // Pega o nome do operador formatado sem a matrícula e sem a turma para ficar bonito no resumo
-    const operatorName = currentSession.operator.split('-')[1] ? currentSession.operator.split('-')[1].trim() : currentSession.operator;
 
     statusBox.innerHTML = `
         <div style="display:flex; justify-content: space-between; align-items:center;">
             <div>
                 <strong>Máquina ${currentSession.machine}</strong><br>
                 <span style="color:var(--accent);">${currentSession.order}</span><br>
-                <small style="color:var(--muted);">Operador: ${operatorName}</small>
+                <small style="color:var(--muted);">Operador: ${currentSession.operator}</small>
             </div>
             <div style="text-align: right;">
                 ${isFinished ? '<span class="badge-finished">SESSÃO CONCLUÍDA 🎉</span>' : `<strong>${measuredCount}/${totalColors}</strong><br><small>cores</small>`}
@@ -734,7 +688,7 @@ function saveRecord() {
     };
 
     records.unshift(newRecord);
-    localStorage.setItem("val_historico_v4", JSON.stringify(records));
+    localStorage.setItem("val_historico_v3", JSON.stringify(records));
 
     currentSession.measuredColors[activeColor] = val;
 
@@ -742,6 +696,29 @@ function saveRecord() {
     document.getElementById("viscosity").value = "";
     updateStatus();
     updateSessionUI();
+
+    // NOVO: Lógica para identificar fim da sessão e limpar painel
+    const totalColors = currentSession.selectedColors.length;
+    const measuredCount = Object.keys(currentSession.measuredColors).length;
+
+    if (measuredCount === totalColors) {
+        setTimeout(() => {
+            alert("✅ Todas as cores desta rodada foram registradas! Sessão finalizada.");
+            
+            // Limpa o pedido e desmarca todas as cores
+            document.getElementById("order").value = "";
+            document.querySelectorAll('#colorCheckboxes input[type="checkbox"]').forEach(cb => cb.checked = false);
+            
+            // Se existiam tintas avulsas (customizadas) no input, limpa também
+            document.getElementById("customInkInput").value = "";
+            
+            // Desativa a sessão atual
+            currentSession = { active: false, machine: null, operator: null, order: null, selectedColors: [], measuredColors: {} };
+            
+            // Atualiza a tela (vai desabilitar botões e mostrar "Nenhuma sessão ativa")
+            updateSessionUI();
+        }, 300); // 300ms de espera para dar tempo da tela atualizar e mostrar a última cor como '✔ (Registrado)' antes do popup
+    }
 }
 
 function renderHistory() {
@@ -751,37 +728,24 @@ function renderHistory() {
         return;
     }
 
-    tbody.innerHTML = records.map(r => {
-        // Limpar o nome para o histórico (Exibe só o primeiro e segundo nome)
-        let opName = r.operator;
-        if(opName.includes('-')) {
-            const nameParts = opName.split('-')[1].trim().split(' ');
-            opName = nameParts[0] + (nameParts[1] ? ' ' + nameParts[1] : '');
-        }
-
-        return `
+    tbody.innerHTML = records.map(r => `
         <tr>
             <td>${r.date}<br><small>${r.time}</small></td>
             <td>Máq. ${r.machine}</td>
-            <td>${opName}</td>
+            <td>${r.operator.split(' ')[0]}</td>
             <td>${r.order}</td>
             <td><strong>${r.color}</strong></td>
             <td><strong>${r.value.toFixed(1).replace(".", ",")} s</strong></td>
             <td><span class="pill ${r.status}">${r.label}</span></td>
         </tr>
-        `;
-    }).join("");
+    `).join("");
 }
 
 function exportCSV() {
     if (!records.length) { alert("Não há registros para exportar."); return; }
 
     const header = ["Data", "Hora", "Máquina", "Operador", "Pedido/Cliente", "Cor/Tinta", "Tempo (s)", "Status"];
-    const rows = records.map(r => {
-        // Formatar o nome do operador para a planilha (sem o traço da turma no final)
-        const opPlanilha = r.operator.replace(/ - [A-D]$/, '').trim();
-        return [r.date, r.time, r.machine, opPlanilha, r.order, r.color, r.value.toFixed(1).replace(".", ","), r.label];
-    });
+    const rows = records.map(r => [r.date, r.time, r.machine, r.operator, r.order, r.color, r.value.toFixed(1).replace(".", ","), r.label]);
 
     const csvContent = [header, ...rows].map(e => e.map(val => `"${String(val).replace(/"/g, '""')}"`).join(";")).join("\r\n");
     const blob = new Blob(["\ufeff" + csvContent], { type: "text/csv;charset=utf-8;" });
@@ -791,12 +755,21 @@ function exportCSV() {
     link.download = `viscosidade_valgroup_${new Date().toISOString().slice(0,10)}.csv`;
     link.click();
     URL.revokeObjectURL(url);
+
+    // NOVO: Sugere a exclusão do histórico logo após o download
+    setTimeout(() => {
+        if (confirm("✅ Exportação concluída!\n\nDeseja limpar o histórico de registros agora para evitar o acúmulo de dados na memória do tablet?")) {
+            records = [];
+            localStorage.removeItem("val_historico_v3");
+            renderHistory();
+        }
+    }, 800); // Aguarda quase 1 segundo para não travar o clique de download
 }
 
 function clearHistory() {
     if (!confirm("Deseja apagar todo o histórico acumulado? Esta ação não pode ser desfeita.")) return;
     records = [];
-    localStorage.removeItem("val_historico_v4");
+    localStorage.removeItem("val_historico_v3");
     renderHistory();
 }
 
