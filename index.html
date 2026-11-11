@@ -5,7 +5,22 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Controle de Viscosidade - Valgroup</title>
 
+<!-- Fontes do Google: Inter -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+<!-- Bibliotecas: Exportação Excel, Gráficos e Ícones -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://unpkg.com/lucide@latest"></script>
+
 <style>
+header img {
+    border-radius: 12px;
+    object-fit: contain;
+}
+
 * { box-sizing: border-box; }
 
 :root {
@@ -16,104 +31,140 @@
     --text: #f2f4f5;
     --muted: #9ca3a8;
     --accent: #10b981;
+    --accent-glow: rgba(16, 185, 129, 0.25);
     --green: #4fc47b;
+    --green-bg: rgba(79, 196, 123, 0.15);
     --yellow: #e8b84a;
+    --yellow-bg: rgba(232, 184, 74, 0.15);
     --red: #e05c5c;
+    --red-bg: rgba(224, 92, 92, 0.15);
 }
 
 body {
     margin: 0;
     background: var(--bg);
     color: var(--text);
-    font-family: Arial, sans-serif;
+    font-family: 'Inter', sans-serif;
+    position: relative;
+    min-height: 100vh;
+    transition: background-color 0.3s, color 0.3s;
 }
 
+/* Ajuste fino dos ícones */
+.lucide { width: 18px; height: 18px; vertical-align: text-bottom; }
+h2 .lucide { width: 22px; height: 22px; vertical-align: bottom; margin-right: 6px; color: var(--accent); }
+
 .app {
-    max-width: 800px; 
+    max-width: 900px; 
     margin: auto;
     padding: 20px;
+    padding-bottom: 60px;
 }
 
 header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 20px;
+    margin-bottom: 25px;
     flex-wrap: wrap;
     gap: 15px;
 }
 
-.eyebrow {
-    color: var(--accent);
-    font-size: 12px;
-    font-weight: bold;
-    letter-spacing: 1.6px;
+header img {
+    border-radius: 12px;
 }
 
-h1 { margin: 5px 0; font-size: 26px; }
-p { margin: 0; color: var(--muted); font-size: 13px; }
+.eyebrow {
+    color: var(--accent);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+}
+
+h1 { margin: 4px 0; font-size: 24px; font-weight: 800; letter-spacing: -0.5px; }
+p { margin: 0; color: var(--muted); font-size: 14px; line-height: 1.5; }
 
 .clock {
     color: var(--muted);
     background: var(--card);
     border: 1px solid var(--border);
-    padding: 8px 14px;
+    padding: 10px 16px;
     border-radius: 10px;
     font-size: 14px;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
 }
 
-/* NAVEGAÇÃO POR ABAS */
+/* NAVEGAÇÃO POR ABAS PRINCIPAIS */
 .tabs {
     display: flex;
     gap: 10px;
-    margin-bottom: 20px;
+    margin-bottom: 24px;
     border-bottom: 1px solid var(--border);
-    padding-bottom: 10px;
+    padding-bottom: 12px;
     overflow-x: auto;
 }
 
 .tab-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
     background: var(--card2);
     color: var(--muted);
     border: 1px solid var(--border);
-    padding: 14px 20px;
+    padding: 12px 20px;
     border-radius: 10px;
     font-size: 15px;
-    font-weight: bold;
+    font-weight: 600;
     cursor: pointer;
-    transition: all 0.2s;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
     white-space: nowrap;
 }
 
+.tab-btn:hover { background: #262b30; }
+
 .tab-btn.active {
     background: var(--accent);
-    color: #1C1C69;
+    color: #064e3b;
     border-color: var(--accent);
 }
 
-.tab-content { display: none; }
+.tab-content { display: none; animation: fadeIn 0.3s ease; }
 .tab-content.active { display: block; }
 .admin-only { display: none; }
 
-/* CARDS EM COLUNA ÚNICA PARA TABLET */
-.grid { display: grid; grid-template-columns: 1fr; gap: 18px; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+
+/* CARDS E GRID (SPLIT SCREEN NO TABLET) */
+.grid { display: grid; grid-template-columns: 1fr; gap: 20px; }
+
+@media (min-width: 768px) {
+    .split-screen { grid-template-columns: 1fr 1fr; align-items: start; }
+}
 
 .card {
     background: var(--card);
     border: 1px solid var(--border);
     border-radius: 16px;
     padding: 24px;
-    margin-bottom: 18px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
 }
 
-h2 { margin: 0 0 10px; font-size: 20px; }
+.card.automation {
+    border: 1px solid var(--accent);
+    background: #14221c;
+}
+
+h2 { margin: 0 0 16px; font-size: 18px; font-weight: 700; display: flex; align-items: center; }
 
 label {
     display: block;
     color: #c8cdd0;
-    font-size: 14px;
-    font-weight: bold;
-    margin: 18px 0 8px;
+    font-size: 13px;
+    font-weight: 600;
+    margin: 20px 0 8px;
 }
 
 select, input {
@@ -121,111 +172,274 @@ select, input {
     background: var(--card2);
     color: var(--text);
     border: 1px solid var(--border);
-    border-radius: 9px;
-    padding: 16px; 
-    font-size: 16px;
+    border-radius: 10px;
+    padding: 14px 16px; 
+    font-size: 15px;
+    font-family: 'Inter', sans-serif;
     outline: none;
+    transition: all 0.2s;
 }
 
-select:focus, input:focus { border-color: var(--accent); }
+select:focus, input:focus { 
+    border-color: var(--accent); 
+    box-shadow: 0 0 0 4px var(--accent-glow);
+}
 
-/* SELEÇÃO DE CORES DA SESSÃO */
-.color-selector {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-    gap: 10px;
-    margin-top: 10px;
-    max-height: 250px;
-    overflow-y: auto;
-    padding: 10px;
+/* SEGMENTED CONTROL (Botões de Turma) */
+.segmented-control {
+    display: flex;
     background: var(--card2);
     border: 1px solid var(--border);
-    border-radius: 9px;
+    border-radius: 10px;
+    padding: 4px;
+    gap: 4px;
 }
-
-.color-option {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    font-size: 14px;
-    background: var(--card);
-    padding: 10px 12px;
-    border-radius: 6px;
+.segmented-control input[type="radio"] { display: none; }
+.segmented-control label {
+    margin: 0;
+    flex: 1;
+    text-align: center;
+    padding: 12px 8px;
     cursor: pointer;
+    color: var(--muted);
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 600;
+    transition: all 0.2s ease;
+}
+.segmented-control label:hover { color: var(--text); background: rgba(255,255,255,0.05); }
+.segmented-control input[type="radio"]:checked + label {
+    background: var(--accent);
+    color: #064e3b;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.15);
 }
 
-.color-option input[type="checkbox"] { width: 18px; height: 18px; }
+/* DASHBOARD MINI & CHARTS */
+.dash-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 15px;
+    margin-bottom: 25px;
+}
+.dash-card {
+    background: var(--card2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 18px 10px;
+    text-align: center;
+}
+.dash-card h4 {
+    margin: 0;
+    color: var(--muted);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-weight: 700;
+}
+.dash-card h2 { margin: 8px 0 0 0; font-size: 28px; font-weight: 800; font-variant-numeric: tabular-nums; justify-content: center;}
+.dash-total h2 { color: var(--accent); }
+.dash-ok h2 { color: var(--green); }
+.dash-alert h2 { color: var(--red); }
+
+.chart-container {
+    background: var(--card2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: 280px;
+}
 
 /* STATUS E BOTÕES */
 .standard {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background: #151719;
+    background: rgba(255,255,255,0.02);
     border: 1px solid var(--border);
-    border-radius: 9px;
-    padding: 12px 15px;
+    border-radius: 10px;
+    padding: 12px 16px;
     margin-top: 12px;
     font-size: 14px;
     color: var(--muted);
 }
+.standard strong { font-variant-numeric: tabular-nums; color: var(--text); }
 
 button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
     border: 0;
-    border-radius: 9px;
-    padding: 16px;
+    border-radius: 10px;
+    padding: 14px 16px;
     font-size: 15px;
-    font-weight: bold;
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
     cursor: pointer;
+    transition: transform 0.1s, background-color 0.2s, box-shadow 0.2s;
 }
-button:disabled { opacity: .45; cursor: not-allowed; }
+button:active:not(:disabled) { transform: scale(0.97); }
+button:disabled { opacity: 0.45; cursor: not-allowed; }
 
-.primary { background: var(--accent); color: #111; }
+.primary { background: var(--accent); color: #064e3b; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2); }
+.primary:hover:not(:disabled) { background: #34d399; }
 .secondary { background: #2a2f34; color: var(--text); border: 1px solid var(--border); }
-.save { width: 100%; background: var(--green); color: #101512; margin-top: 20px; padding: 18px; font-size: 16px; }
-.danger { background: #382326; color: #f29a9a; }
+.secondary:hover { background: #32383e; }
+.save { width: 100%; background: var(--green); color: #064e3b; margin-top: 20px; padding: 18px; font-size: 16px; box-shadow: 0 4px 12px rgba(79, 196, 123, 0.2); }
+.danger { background: var(--red-bg); color: #fca5a5; border: 1px solid rgba(224, 92, 92, 0.3); }
 
 .status {
     display: flex;
     gap: 10px;
     align-items: center;
     margin-top: 15px;
-    padding: 14px 15px;
-    border-radius: 9px;
-    background: #202428;
+    padding: 14px 16px;
+    border-radius: 10px;
+    background: var(--card2);
     color: var(--muted);
-    font-size: 15px;
-    font-weight: bold;
+    font-size: 14px;
+    font-weight: 600;
+    border: 1px solid transparent;
 }
-.status-dot { width: 12px; height: 12px; border-radius: 50%; background: #777; }
-.status.ok { color: var(--green); }
-.status.ok .status-dot { background: var(--green); }
-.status.below { color: var(--yellow); }
-.status.below .status-dot { background: var(--yellow); }
-.status.above { color: var(--red); }
-.status.above .status-dot { background: var(--red); }
+.status-dot { width: 10px; height: 10px; border-radius: 50%; background: #777; }
+.status.ok { background: var(--green-bg); color: var(--green); border-color: rgba(79, 196, 123, 0.3); }
+.status.ok .status-dot { background: var(--green); box-shadow: 0 0 8px var(--green); }
+.status.below { background: var(--yellow-bg); color: var(--yellow); border-color: rgba(232, 184, 74, 0.3); }
+.status.below .status-dot { background: var(--yellow); box-shadow: 0 0 8px var(--yellow); }
+.status.above { background: var(--red-bg); color: var(--red); border-color: rgba(224, 92, 92, 0.3); }
+.status.above .status-dot { background: var(--red); box-shadow: 0 0 8px var(--red); }
 
-/* LISTAS BASE DE DADOS */
-.crud-group { display: flex; gap: 8px; margin-bottom: 12px; }
-.crud-list { list-style: none; padding: 0; margin: 0; max-height: 200px; overflow-y: auto; }
-.crud-list li { display: flex; justify-content: space-between; align-items: center; background: var(--card2); border: 1px solid var(--border); padding: 10px 15px; border-radius: 8px; margin-bottom: 6px; font-size: 14px; }
-.delete-btn { background: transparent; color: var(--red); border: none; padding: 5px; font-size: 13px; cursor: pointer; }
+/* LISTAS BASE DE DADOS E REGRAS */
+.crud-group { display: flex; gap: 8px; margin-bottom: 16px; }
+.crud-list { list-style: none; padding: 0; margin: 0; max-height: 250px; overflow-y: auto; }
+.crud-list li { display: flex; justify-content: space-between; align-items: center; background: var(--card2); border: 1px solid var(--border); padding: 12px 16px; border-radius: 10px; margin-bottom: 8px; font-size: 14px; }
+.crud-list.rules-list li { flex-direction: column; align-items: flex-start; gap: 10px; }
+.rules-actions { width: 100%; display: flex; justify-content: flex-end; }
+.delete-btn { background: transparent; color: var(--red); border: none; padding: 6px; font-size: 13px; cursor: pointer; display: flex; align-items: center; gap: 4px;}
 
 /* TABELAS E BADGES */
-.table-container { overflow-x: auto; margin-top: 15px; }
-table { width: 100%; border-collapse: collapse; min-width: 650px; }
-th { color: var(--muted); font-size: 12px; text-align: left; padding: 12px; border-bottom: 1px solid var(--border); }
-td { padding: 12px; border-bottom: 1px solid #282d31; font-size: 14px; }
+.table-container { overflow-x: auto; margin-top: 15px; border-radius: 10px; border: 1px solid var(--border); background: var(--card); }
+table { width: 100%; border-collapse: collapse; min-width: 900px; }
+th { color: var(--muted); font-size: 12px; text-transform: uppercase; font-weight: 700; text-align: left; padding: 16px; border-bottom: 1px solid var(--border); background: rgba(0,0,0,0.2); }
+td { padding: 16px; border-bottom: 1px solid #282d31; font-size: 14px; vertical-align: middle; }
 
-.pill { display: inline-block; padding: 6px 10px; border-radius: 20px; font-size: 12px; font-weight: bold; }
-.pill.ok { background: #193324; color: var(--green); }
-.pill.below { background: #382f1a; color: var(--yellow); }
-.pill.above { background: #3a2023; color: var(--red); }
+.pill { display: inline-flex; align-items: center; gap: 4px; padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: 700; margin-bottom: 4px; margin-right: 4px;}
+.pill.ok { background: var(--green-bg); color: var(--green); border: 1px solid rgba(79, 196, 123, 0.3); }
+.pill.below { background: var(--yellow-bg); color: var(--yellow); border: 1px solid rgba(232, 184, 74, 0.3); }
+.pill.above { background: var(--red-bg); color: var(--red); border: 1px solid rgba(224, 92, 92, 0.3); }
+.pill.rule-ink { background: rgba(2, 132, 199, 0.15); color: #38bdf8; border: 1px solid rgba(2, 132, 199, 0.3); }
 
-.session-progress { background: #151719; border: 1px solid var(--border); padding: 16px; border-radius: 9px; margin-bottom: 20px; }
-.badge-finished { background: var(--green); color: #101512; padding: 6px 10px; border-radius: 6px; font-size: 13px; font-weight: bold; }
+.session-progress { background: rgba(255,255,255,0.02); border: 1px dashed var(--border); padding: 20px; border-radius: 12px; margin-bottom: 24px; text-align: center; }
+.badge-finished { background: var(--green-bg); color: var(--green); border: 1px solid var(--green); padding: 6px 10px; border-radius: 6px; font-size: 12px; font-weight: 800; display: inline-flex; align-items: center; gap: 4px;}
 
-footer { text-align: center; margin-top: 30px; font-size: 12px; color: var(--muted); }
+/* CAIXA DE SUGESTÃO */
+#operatorSuggestionBox {
+    background: rgba(16, 185, 129, 0.1);
+    border: 1px dashed var(--accent);
+    color: var(--text);
+    padding: 16px;
+    border-radius: 10px;
+    margin-bottom: -10px;
+    cursor: pointer;
+    transition: background 0.2s;
+    font-size: 14px;
+    line-height: 1.5;
+}
+#operatorSuggestionBox:active { background: rgba(16, 185, 129, 0.2); transform: scale(0.99); }
+
+/* MODAIS GERAIS */
+.modal-overlay {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(4px);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+    padding: 15px;
+}
+.modal-overlay.active { display: flex; animation: fadeIn 0.2s ease; }
+.modal-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    width: 100%;
+    max-width: 550px;
+    max-height: 95vh;
+    overflow-y: auto;
+    padding: 28px;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+}
+.modal-card.large { max-width: 900px; }
+
+/* BOTÕES DO MENU PRINCIPAL */
+.menu-btn {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    background: var(--card2);
+    border: 1px solid var(--border);
+    padding: 20px;
+    border-radius: 12px;
+    margin-bottom: 12px;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text);
+    cursor: pointer;
+    text-align: left;
+    width: 100%;
+}
+.menu-btn:hover { border-color: var(--accent); background: rgba(16, 185, 129, 0.05); }
+.menu-btn-icon { background: rgba(255,255,255,0.05); padding: 12px; border-radius: 10px; display: flex; color: var(--accent); }
+.menu-btn-icon .lucide { width: 24px; height: 24px; }
+.menu-btn-text { display: flex; flex-direction: column; }
+.menu-btn-text small { font-size: 13px; color: var(--muted); font-weight: 400; margin-top: 4px; }
+
+/* MODO CLARO (LIGHT THEME) */
+body.light-mode {
+    --bg: #f8fafc; --card: #ffffff; --card2: #f1f5f9; --border: #e2e8f0;
+    --text: #0f172a; --muted: #64748b; --accent: #059669; 
+    --accent-glow: rgba(5, 150, 105, 0.2);
+    --green: #059669; --green-bg: #d1fae5;
+    --yellow: #d97706; --yellow-bg: #fef3c7;
+    --red: #dc2626; --red-bg: #fee2e2;
+}
+body.light-mode .card.automation {
+    background: #ecfdf5;
+    border-color: #a7f3d0;
+}
+body.light-mode #ruleColorsPreview {
+    background: rgba(0, 0, 0, 0.03);
+}
+
+body.light-mode label { color: #334155; }
+body.light-mode .primary, body.light-mode .save { color: #ffffff; }
+body.light-mode .tab-btn.active { color: #ffffff; }
+body.light-mode .secondary { background: #f1f5f9; color: #0f172a; border-color: #cbd5e1; }
+body.light-mode .secondary:hover { background: #e2e8f0; }
+body.light-mode .danger { background: #fee2e2; color: #dc2626; border-color: #fca5a5; }
+body.light-mode .standard { background: #f8fafc; }
+body.light-mode th { background: #f1f5f9; color: #475569; }
+body.light-mode .segmented-control label:hover { background: rgba(0,0,0,0.05); color: #0f172a;}
+body.light-mode #operatorSuggestionBox { background: #e0f2fe; border-color: #0ea5e9; color: #0f172a; }
+body.light-mode #suggestedOperatorName { color: #0284c7; }
+body.light-mode .menu-btn { background: #ffffff; color: #0f172a; border-color: #e2e8f0; }
+body.light-mode .menu-btn-icon { background: #f1f5f9; }
+
+@media print {
+    body { background: #fff !important; color: #000 !important; }
+    .tabs, header button, header .clock, footer, .no-print, .modal-overlay { display: none !important; }
+    #historyTab { display: block !important; }
+    .card { background: transparent !important; border: none !important; box-shadow: none !important; padding:0;}
+    table { width: 100% !important; border-collapse: collapse !important; }
+    th, td { border: 1px solid #000 !important; color: #000 !important; padding: 8px !important; font-size: 13px !important; }
+    .pill { border: 1px solid #000 !important; }
+}
 </style>
 </head>
 <body>
@@ -233,64 +447,116 @@ footer { text-align: center; margin-top: 30px; font-size: 12px; color: var(--mut
 <main class="app">
 
 <header>
-    <div>
-        <span class="eyebrow">VALGROUP • CONTROLE DE PRODUÇÃO</span>
-        <h1>Viscosidade de Tintas</h1>
+    <div style="display: flex; align-items: center; gap: 15px;">
+        <img alt="" src="data:image/png;base64,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" />         <div>
+            <span class="eyebrow">Valgroup • Controle de Produção</span>
+            <h1>Viscosidade de Tintas</h1>
+        </div>
     </div>
-    <div class="clock" id="currentTime">--:--</div>
+    
+    <div style="display: flex; gap: 10px; align-items: center;">
+        <button class="secondary" onclick="openModal('mainMenuModal')">
+            <i data-lucide="settings"></i> Menu
+        </button>
+        <div class="clock" id="currentTime">--:--</div>
+    </div>
 </header>
 
 <!-- ABAS DE NAVEGAÇÃO -->
 <div class="tabs">
-    <button class="tab-btn active" onclick="switchTab('measurementTab', this)">⏱️ Área de Medição</button>
-    <button class="tab-btn admin-only" id="adminTabBtn" onclick="switchTab('databaseTab', this)">🗄 Base de Dados</button>
-    <button class="tab-btn" onclick="switchTab('historyTab', this)">📊 Histórico & Exportar</button>
+    <button class="tab-btn active" onclick="switchTab('measurementTab', this)">
+        <i data-lucide="timer"></i> Medição
+    </button>
+    <button class="tab-btn" onclick="switchTab('historyTab', this)">
+        <i data-lucide="bar-chart-2"></i> Histórico
+    </button>
+    <button class="tab-btn admin-only" id="adminTabBtn" onclick="switchTab('databaseTab', this)">
+        <i data-lucide="database"></i> Dados (Admin)
+    </button>
 </div>
 
 <!-- ABA 1: ÁREA DE MEDIÇÃO -->
 <section id="measurementTab" class="tab-content active">
-    <div class="grid">
+    <div class="grid split-screen">
+        <!-- COLUNA ESQUERDA: CONFIGURAÇÃO -->
         <div class="card">
-            <h2>1. Configurar Sessão da Máquina</h2>
+            <h2><i data-lucide="sliders-horizontal"></i> 1. Configurar Sessão</h2>
             
             <label for="machine">Máquina</label>
-            <select id="machine"></select>
-
-            <!-- NOVO FILTRO DE TURMA -->
-            <label for="teamFilter">Turma</label>
-            <select id="teamFilter" onchange="renderOperators()">
-                <option value="ALL">Todas as Turmas</option>
-                <option value="A">Turma A</option>
-                <option value="B">Turma B</option>
-                <option value="C">Turma C</option>
-                <option value="D">Turma D</option>
-            </select>
-
-            <label for="operator">Operador</label>
-            <select id="operator"></select>
-
-            <label for="order">Pedido / Cliente</label>
-            <input type="text" id="order" list="ordersDataList" placeholder="Selecione na lista ou digite um novo...">
-            <datalist id="ordersDataList"></datalist>
-
-            <label>Selecione as Cores da Rodada</label>
-            <div class="color-selector" id="colorCheckboxes"></div>
-            
-            <div style="display: flex; gap: 8px; margin-top: 12px;">
-                <input type="text" id="customInkInput" placeholder="Tinta não listada? Digite aqui...">
-                <button class="secondary" onclick="addCustomInk()" style="padding: 0 20px; white-space: nowrap;">+ Add</button>
+            <div style="display: flex; gap: 10px; margin-bottom: 15px; align-items: stretch;">
+                <select id="machine" style="flex: 1; margin: 0;" onchange="updateOperatorSuggestion()"></select>
+                <button class="danger" style="margin: 0; padding: 0 16px; flex-shrink: 0;" onclick="skipMachine()" title="Parada de máquina">
+                    <i data-lucide="pause-circle"></i>
+                </button>
             </div>
 
+            <label>Turma</label>
+            <div class="segmented-control">
+                <input type="radio" id="teamALL" name="teamGroup" value="ALL" checked onchange="setTeam('ALL')">
+                <label for="teamALL">Todas</label>
+                
+                <input type="radio" id="teamA" name="teamGroup" value="A" onchange="setTeam('A')">
+                <label for="teamA">A</label>
+                
+                <input type="radio" id="teamB" name="teamGroup" value="B" onchange="setTeam('B')">
+                <label for="teamB">B</label>
+                
+                <input type="radio" id="teamC" name="teamGroup" value="C" onchange="setTeam('C')">
+                <label for="teamC">C</label>
+                
+                <input type="radio" id="teamD" name="teamGroup" value="D" onchange="setTeam('D')">
+                <label for="teamD">D</label>
+            </div>
+            <input type="hidden" id="teamFilter" value="ALL">
+
+            <label for="operator">Operador</label>
+            
+            <div id="operatorSuggestionBox" style="display:none;" onclick="applySuggestedOperator()">
+                <div style="display:flex; align-items:center; gap:6px; color:var(--accent); font-weight:700; margin-bottom:4px;">
+                    <i data-lucide="zap"></i> Regra Ativa
+                </div>
+                Sugestão: <span id="suggestedOperatorName" style="font-weight:bold;"></span><br>
+                <small style="color:var(--muted);">Toque para preencher</small>
+            </div>
+
+            <select id="operator" style="margin-top: 10px;"></select>
+
+            <div style="display: flex; gap: 15px; flex-wrap: wrap;">
+                <div style="flex: 1; min-width: 180px;">
+                    <label for="order">Pedido / Cliente</label>
+                    <input type="text" id="order" list="ordersDataList" placeholder="Selecione ou digite..." onchange="checkOrderRules()">
+                    <datalist id="ordersDataList"></datalist>
+                </div>
+                <div style="flex: 1; min-width: 120px;">
+                    <label for="size">Tamanho</label>
+                    <input type="text" id="size" list="sizesDataList" placeholder="Ex: 38x48">
+                    <datalist id="sizesDataList"></datalist>
+                </div>
+            </div>
+
+            <label>Cores da Rodada (Máx 6)</label>
+            <div style="display: flex; gap: 8px;">
+                <input type="text" id="inkSearchInput" list="inksDataList" placeholder="Pesquisar..." onkeydown="if(event.key === 'Enter') addInkToSession()">
+                <datalist id="inksDataList"></datalist>
+                <button class="secondary" onclick="addInkToSession()"><i data-lucide="plus"></i> Add</button>
+            </div>
+            
+            <div id="selectedColorsContainer" style="display: flex; gap: 8px; flex-wrap: wrap; margin-top: 15px;"></div>
+
             <button class="primary" style="width:100%; margin-top:25px;" onclick="startMachineSession()">
-                🎛️ Iniciar Sessão da Máquina
+                <i data-lucide="play-circle"></i> Iniciar Sessão da Máquina
             </button>
         </div>
 
+        <!-- COLUNA DIREITA: MEDIÇÃO -->
         <div class="card">
-            <h2>2. Registrar Medição</h2>
+            <h2><i data-lucide="pen-tool"></i> 2. Registrar Medição</h2>
             
             <div id="sessionStatusBox" class="session-progress">
-                <span style="color:var(--muted); font-size:14px;">Nenhuma sessão ativa. Inicie acima.</span>
+                <span style="color:var(--muted); font-size:14px;">
+                    <i data-lucide="inbox" style="width:32px; height:32px; display:block; margin: 0 auto 10px; opacity: 0.5;"></i>
+                    Nenhuma sessão ativa.<br>Configure e inicie a máquina.
+                </span>
             </div>
 
             <label for="activeColorSelect">Cor a ser registrada</label>
@@ -298,115 +564,325 @@ footer { text-align: center; margin-top: 30px; font-size: 12px; color: var(--mut
 
             <div class="standard">
                 <span>Padrão de referência</span>
-                <strong>17–21 segundos</strong>
+                <strong>17–21 s</strong>
             </div>
 
-            <label for="viscosity">Tempo medido no cronômetro (segundos)</label>
-            <input id="viscosity" type="number" step="0.1" placeholder="Ex.: 18,5" oninput="updateStatus()" disabled>
+            <label for="viscosity">Tempo no cronômetro (s)</label>
+            <input id="viscosity" type="number" step="0.1" placeholder="Ex.: 18,5" oninput="updateStatus()" onkeydown="if(event.key === 'Enter' && !this.disabled) saveRecord()" disabled>
 
             <div class="status" id="status">
                 <span class="status-dot"></span>
                 <span>Aguardando digitação</span>
             </div>
 
-            <button class="save" id="saveBtn" onclick="saveRecord()" disabled>Salvar Medição desta Cor</button>
+            <button class="save" id="saveBtn" onclick="saveRecord()" disabled>
+                <i data-lucide="save"></i> Salvar Medição desta Cor
+            </button>
         </div>
     </div>
 </section>
 
-<!-- ABA 2: BASE DE DADOS -->
-<section id="databaseTab" class="tab-content admin-only">
-    <div class="grid">
-        <div class="card">
-            <h2>Cadastrar Operadores</h2>
-            <p style="margin-bottom:10px;">Adicione no formato "Turma|Matricula - Nome".</p>
-            <div class="crud-group">
-                <input type="text" id="newOperatorInput" placeholder="Ex: A|104 - João">
-                <button class="primary" onclick="addMasterData('operators', 'newOperatorInput')">Adicionar</button>
-            </div>
-            <ul class="crud-list" id="operatorsList"></ul>
-        </div>
-
-        <div class="card">
-            <h2>Cadastrar Pedidos (Fixo)</h2>
-            <p style="margin-bottom:10px;">Adicione à lista permanente.</p>
-            <div class="crud-group">
-                <input type="text" id="newOrderInput" placeholder="Ex: Atacadão - Pedido #402">
-                <button class="primary" onclick="addMasterData('orders', 'newOrderInput')">Adicionar</button>
-            </div>
-            <ul class="crud-list" id="ordersList"></ul>
-        </div>
-
-        <div class="card">
-            <h2>Catálogo de Tintas (Fixo)</h2>
-            <p style="margin-bottom:10px;">Cadastre as tintas na lista permanente.</p>
-            <div class="crud-group">
-                <input type="text" id="newInkInput" placeholder="Ex: Vermelho 485">
-                <button class="primary" onclick="addMasterData('inks', 'newInkInput')">Adicionar</button>
-            </div>
-            <ul class="crud-list" id="inksList"></ul>
-        </div>
-    </div>
-</section>
-
-<!-- ABA 3: HISTÓRICO -->
+<!-- ABA HISTÓRICO -->
 <section id="historyTab" class="tab-content">
-    <div class="card">
-        <h2>Histórico Geral de Medições</h2>
-        
-        <div style="display:flex; gap:10px; margin-bottom:20px; flex-wrap:wrap;">
-            <button class="secondary" onclick="exportCSV()" style="flex:1;">⇩ Exportar Planilha (CSV)</button>
-            <button class="danger admin-only" id="adminClearBtn" onclick="clearHistory()">Excluir Histórico</button>
+    <div class="card" style="padding:0; border:none; background:transparent; box-shadow:none;">
+        <div class="no-print" style="display: flex; gap: 15px; margin-bottom: 20px; flex-wrap: wrap; background: var(--card); padding: 20px; border-radius:16px; border: 1px solid var(--border);">
+            <div style="flex: 1; min-width: 140px;">
+                <label for="historyStartDate" style="margin-top: 0;">Data Inicial:</label>
+                <input type="date" id="historyStartDate" onchange="syncFilters('start', this.value)">
+            </div>
+            <div style="flex: 1; min-width: 140px;">
+                <label for="historyEndDate" style="margin-top: 0;">Data Final:</label>
+                <input type="date" id="historyEndDate" onchange="syncFilters('end', this.value)">
+            </div>
+            
+            <div style="width: 100%; display:flex; gap:10px; flex-wrap:wrap; margin-top: 10px;">
+                <button class="secondary" onclick="exportExcel()" style="flex:1;"><i data-lucide="download"></i> Planilha</button>
+                <button class="secondary" onclick="window.print()" style="flex:1;"><i data-lucide="printer"></i> PDF / Imprimir</button>
+                <button class="danger" onclick="clearHistory()"><i data-lucide="trash-2"></i> Limpar</button>
+            </div>
         </div>
 
         <div class="table-container">
             <table>
                 <thead>
                     <tr>
-                        <th>Data/Hora</th>
                         <th>Máquina</th>
-                        <th>Operador</th>
-                        <th>Pedido/Cliente</th>
-                        <th>Cor/Tinta</th>
-                        <th>Tempo</th>
-                        <th>Status</th>
+                        <th>Operador (Cód)</th>
+                        <th>Pedido</th>
+                        <th>Tamanho</th>
+                        <th>Cores e Viscosidade Registradas</th>
+                        <th class="no-print" style="text-align:center;">Ações</th>
                     </tr>
                 </thead>
                 <tbody id="historyBody">
-                    <tr><td colspan="7" style="text-align:center; color:var(--muted); padding: 30px;">Nenhum registro até o momento.</td></tr>
+                    <tr><td colspan="6" style="text-align:center; color:var(--muted); padding: 40px;">Nenhum registro até o momento.</td></tr>
                 </tbody>
             </table>
         </div>
     </div>
 </section>
 
-<footer>Valgroup • Controle Integrado de Viscosidade</footer>
+<!-- ABA BASE DE DADOS (APENAS ADMIN) -->
+<section id="databaseTab" class="tab-content admin-only">
+    <h1 style="margin-top:0; margin-bottom:20px;">Gerenciar Opções</h1>
+    <div class="grid split-screen">
+        <div class="card">
+            <h2>Operadores</h2>
+            <div class="crud-group">
+                <input type="text" id="newOperatorInput" placeholder="Ex: A|104 - João">
+                <button class="primary" onclick="addMasterData('operators', 'newOperatorInput')">Add</button>
+            </div>
+            <ul class="crud-list" id="operatorsList"></ul>
+        </div>
+        <div class="card">
+            <h2>Pedidos / Clientes</h2>
+            <div class="crud-group">
+                <input type="text" id="newOrderInput" placeholder="Ex: Atacadão - Pedido #402">
+                <button class="primary" onclick="addMasterData('orders', 'newOrderInput')">Add</button>
+            </div>
+            <ul class="crud-list" id="ordersList"></ul>
+        </div>
+        <div class="card">
+            <h2>Tamanhos</h2>
+            <div class="crud-group">
+                <input type="text" id="newSizeInput" placeholder="Ex: 80x100">
+                <button class="primary" onclick="addMasterData('sizes', 'newSizeInput')">Add</button>
+            </div>
+            <ul class="crud-list" id="sizesList"></ul>
+        </div>
+        <div class="card">
+            <h2>Catálogo de Tintas</h2>
+            <div class="crud-group">
+                <input type="text" id="newInkInput" placeholder="Ex: Vermelho 485">
+                <button class="primary" onclick="addMasterData('inks', 'newInkInput')">Add</button>
+            </div>
+            <ul class="crud-list" id="inksList"></ul>
+        </div>
+    </div>
+</section>
 
 </main>
 
+<!-- MODAIS -->
+
+<!-- 1. MENU HUB CENTRAL -->
+<div id="mainMenuModal" class="modal-overlay no-print">
+    <div class="modal-card">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+            <h2 style="margin:0;"><i data-lucide="settings"></i> Menu Geral</h2>
+            <button class="secondary" onclick="closeModal('mainMenuModal')" style="padding: 8px;"><i data-lucide="x"></i></button>
+        </div>
+        
+        <button class="menu-btn" onclick="openDashboardModal()">
+            <span class="menu-btn-icon"><i data-lucide="pie-chart"></i></span>
+            <span class="menu-btn-text">
+                Dashboard de Produção
+                <small>Gráficos e visão geral de desempenho</small>
+            </span>
+        </button>
+
+        <button class="menu-btn" onclick="openModalAndCloseHub('rulesModal')">
+            <span class="menu-btn-icon"><i data-lucide="cpu"></i></span>
+            <span class="menu-btn-text">
+                Regras e Automação
+                <small>Vincule operadores a máquinas ou tintas a pedidos.</small>
+            </span>
+        </button>
+
+        <button class="menu-btn" onclick="openModalAndCloseHub('appearanceModal')">
+            <span class="menu-btn-icon"><i data-lucide="palette"></i></span>
+            <span class="menu-btn-text">
+                Aparência (Configurações)
+                <small>Altere o tema (Claro/Escuro) e fontes.</small>
+            </span>
+        </button>
+
+        <button class="menu-btn" onclick="openModalAndCloseHub('helpModal')">
+            <span class="menu-btn-icon"><i data-lucide="help-circle"></i></span>
+            <span class="menu-btn-text">
+                Ajuda e Tutorial
+                <small>Passo a passo rápido de como usar.</small>
+            </span>
+        </button>
+    </div>
+</div>
+
+<!-- 2. DASHBOARD MODAL -->
+<div id="dashboardModal" class="modal-overlay no-print">
+    <div class="modal-card large" style="background: var(--bg); border: none;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+            <h2 style="margin:0;"><i data-lucide="pie-chart"></i> Painel de Desempenho</h2>
+            <button class="secondary" onclick="closeModal('dashboardModal')" style="padding: 8px 16px;"><i data-lucide="x"></i> Fechar</button>
+        </div>
+        
+        <div class="no-print" style="display: flex; gap: 15px; margin-bottom: 25px; flex-wrap: wrap; background: var(--card); padding: 20px; border-radius: 16px; border: 1px solid var(--border);">
+            <div style="flex: 1; min-width: 140px;">
+                <label for="dashStartDate" style="margin-top: 0;">Data Inicial:</label>
+                <input type="date" id="dashStartDate" onchange="syncFilters('start', this.value)">
+            </div>
+            <div style="flex: 1; min-width: 140px;">
+                <label for="dashEndDate" style="margin-top: 0;">Data Final:</label>
+                <input type="date" id="dashEndDate" onchange="syncFilters('end', this.value)">
+            </div>
+        </div>
+
+        <div class="dash-grid no-print">
+            <div class="dash-card dash-total"><h4>Cores Lidas (100%)</h4><h2 id="dashTotal">0</h2></div>
+            <div class="dash-card dash-ok"><h4>No Padrão</h4><h2 id="dashOk">0</h2></div>
+            <div class="dash-card dash-alert"><h4>Fora do Padrão</h4><h2 id="dashAlerta">0</h2></div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px;">
+            <div class="chart-container">
+                <h3 style="margin: 0 0 15px 0; font-size: 15px; color: var(--text); text-align: center;">Distribuição de Viscosidade (%)</h3>
+                <div style="position: relative; height: 200px; width: 100%;"><canvas id="statusChart"></canvas></div>
+            </div>
+            <div class="chart-container">
+                <h3 style="margin: 0 0 15px 0; font-size: 15px; color: var(--text); text-align: center;">Tempo Médio por Turma (s)</h3>
+                <div style="position: relative; height: 200px; width: 100%;"><canvas id="teamChart"></canvas></div>
+            </div>
+            <div class="chart-container" style="grid-column: 1 / -1;">
+                <h3 style="margin: 0 0 15px 0; font-size: 15px; color: var(--text); text-align: center;">Medições Fora do Padrão por Máquina</h3>
+                <div style="position: relative; height: 220px; width: 100%;"><canvas id="machineChart"></canvas></div>
+            </div>
+            <div class="chart-container">
+                <h3 style="margin: 0 0 15px 0; font-size: 15px; color: var(--text); text-align: center;">Medições Fora do Padrão por Turma</h3>
+                <div style="position: relative; height: 200px; width: 100%;"><canvas id="teamDivergenceChart"></canvas></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 3. REGRAS DE AUTOMAÇÃO MODAL -->
+<div id="rulesModal" class="modal-overlay no-print">
+    <div class="modal-card large">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+            <h2 style="margin:0; color:var(--accent);"><i data-lucide="cpu"></i> Automação e Padrões</h2>
+            <button class="secondary" onclick="closeModal('rulesModal')" style="padding: 8px 16px;"><i data-lucide="x"></i> Fechar</button>
+        </div>
+        
+        <div class="grid split-screen">
+            <div class="card automation" style="margin-bottom:0;">
+                <h2><i data-lucide="bot"></i> Operador Padrão</h2>
+                <p style="margin-bottom:15px;">Associa automaticamente um operador quando a Turma e a Máquina são selecionadas.</p>
+                
+                <div style="display:flex; gap:10px; flex-wrap:wrap; align-items:end;">
+                    <div style="flex:1; min-width:90px;"><label style="margin-top:0;">SE Turma</label><select id="ruleTeam"><option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option></select></div>
+                    <div style="flex:1; min-width:120px;"><label style="margin-top:0;">E Máquina</label><select id="ruleMachine"></select></div>
+                    <div style="flex:2; min-width:180px;"><label style="margin-top:0;">ENTÃO Operador</label><select id="ruleOperator"></select></div>
+                </div>
+                
+                <button class="primary" style="margin-top:20px; width:100%;" onclick="saveMachineRule()">Salvar Regra de Operador</button>
+                <label style="margin-top:25px; border-bottom:1px solid var(--border); padding-bottom:10px;">Regras Ativas de Operadores</label>
+                <ul class="crud-list rules-list" id="machineRulesList" style="margin-top:10px;"></ul>
+            </div>
+
+            <div class="card automation" style="margin-bottom:0;">
+                <h2><i data-lucide="bot"></i> Cores Padrão por Pedido</h2>
+                <p style="margin-bottom:15px;">Ao selecionar este pedido, as tintas abaixo serão carregadas sozinhas.</p>
+                
+                <label style="margin-top:0;">SE Pedido for =</label>
+                <select id="ruleOrder" style="margin-bottom:15px;"></select>
+                
+                <label style="margin-top:0;">ENTÃO Carregar Cores =</label>
+                <div style="display:flex; gap:8px; margin-bottom:15px;">
+                    <input type="text" id="ruleInkInput" list="inksDataList" placeholder="Adicionar cor..." onkeydown="if(event.key === 'Enter') addRuleColor()">
+                    <button class="secondary" onclick="addRuleColor()"><i data-lucide="plus"></i></button>
+                </div>
+                
+                <div id="ruleColorsPreview" style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:20px; min-height: 48px; background:rgba(0,0,0,0.1); padding:12px; border-radius:10px; border: 1px dashed var(--border);"></div>
+                
+                <button class="primary" style="width:100%;" onclick="saveOrderRule()">Salvar Regra de Tintas</button>
+                <label style="margin-top:25px; border-bottom:1px solid var(--border); padding-bottom:10px;">Regras Ativas de Pedidos</label>
+                <ul class="crud-list rules-list" id="orderRulesList" style="margin-top:10px;"></ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 4. APARÊNCIA E CONFIGURAÇÕES MODAL -->
+<div id="appearanceModal" class="modal-overlay no-print">
+    <div class="modal-card">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+            <h2 style="margin:0;"><i data-lucide="palette"></i> Aparência</h2>
+            <button class="secondary" onclick="closeModal('appearanceModal')" style="padding: 8px 16px;"><i data-lucide="x"></i> Fechar</button>
+        </div>
+        
+        <label>Tema do Aplicativo</label>
+        <button class="secondary" id="modalThemeToggleBtn" onclick="toggleTheme()" style="width: 100%; margin-bottom: 25px;">
+            <i data-lucide="sun"></i> Alternar para Modo Claro
+        </button>
+
+        <label>Tamanho da Fonte (Em breve)</label>
+        <select id="fontSizeSelect" disabled style="margin-bottom: 25px; opacity:0.5;">
+            <option value="medium">Normal (Padrão)</option>
+        </select>
+
+        <button class="save" onclick="closeModal('appearanceModal')"><i data-lucide="check"></i> Concluído</button>
+    </div>
+</div>
+
+<!-- 5. AJUDA MODAL -->
+<div id="helpModal" class="modal-overlay no-print">
+    <div class="modal-card">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+            <h2 style="margin:0;"><i data-lucide="help-circle"></i> Como usar o App</h2>
+            <button class="secondary" onclick="closeModal('helpModal')" style="padding: 8px 16px;"><i data-lucide="x"></i> Fechar</button>
+        </div>
+        <div style="color:var(--text); line-height: 1.6; font-size: 14px;">
+            <p><strong>1. Configurar:</strong> Selecione a Máquina e a Turma. Preencha o Pedido, Tamanho e adicione as Cores (Tintas).</p><br>
+            <p><strong>2. Registrar:</strong> Inicie a sessão e digite o tempo da tinta no cronômetro. Clique em "Salvar Medição". Repita para todas as tintas.</p><br>
+            <p><strong>3. Dashboard:</strong> No Menu Geral você encontra gráficos automáticos de desempenho baseados nos seus registros.</p>
+        </div>
+        <button class="primary" onclick="closeModal('helpModal')" style="width: 100%; margin-top: 25px;">Entendi!</button>
+    </div>
+</div>
+
+<!-- 6. EDIÇÃO DE REGISTRO MODAL -->
+<div id="editModal" class="modal-overlay no-print">
+    <div class="modal-card">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+            <h2 style="margin:0;"><i data-lucide="edit-2"></i> Editar Registro</h2>
+            <button class="secondary" onclick="closeModal('editModal')" style="padding: 8px;"><i data-lucide="x"></i></button>
+        </div>
+        <input type="hidden" id="editRecordId">
+        
+        <div style="display:flex; gap:15px; flex-wrap:wrap;">
+            <div style="flex:1; min-width:140px;"><label for="editMachine" style="margin-top:0;">Máquina</label><select id="editMachine"></select></div>
+            <div style="flex:1; min-width:140px;"><label for="editOperatorCode" style="margin-top:0;">Cód. Operador</label><input type="text" id="editOperatorCode"></div>
+        </div>
+
+        <div style="display:flex; gap:15px; flex-wrap:wrap;">
+            <div style="flex:1; min-width:140px;"><label for="editOrder">Pedido / Cliente</label><input type="text" id="editOrder"></div>
+            <div style="flex:1; min-width:140px;"><label for="editSize">Tamanho</label><input type="text" id="editSize"></div>
+        </div>
+
+        <label style="margin-top:25px; border-bottom:1px solid var(--border); padding-bottom:10px;">Ajustar Viscosidades (s)</label>
+        <div id="editMeasurementsList" style="margin-top:15px; display:flex; flex-direction:column; gap:10px;"></div>
+
+        <div style="display:flex; gap:10px; margin-top:30px;">
+            <button class="secondary" onclick="closeModal('editModal')" style="flex:1;">Cancelar</button>
+            <button class="save" onclick="saveEditRecord()" style="flex:2; margin-top:0;"><i data-lucide="save"></i> Salvar Alterações</button>
+        </div>
+    </div>
+</div>
+
 <script>
-/* VERIFICAÇÃO DO MODO ADMIN */
-function checkAdminAccess() {
-    const urlParams = new URLSearchParams(window.location.search);
-    if (urlParams.get('admin') === 'valgroup2026') {
-        document.getElementById('adminTabBtn').style.display = 'block';
-        document.getElementById('adminClearBtn').style.display = 'inline-block';
-    }
-}
+/* =========================================
+   INICIALIZAÇÃO E ÍCONES
+========================================= */
 
 const validMachines = [2319, 2320, 2321, 2322, 2323, 2324, 2325, 2327, 2329, 2330, 2331, 2332, 2333, 2334, 2335];
-const MIN = 17;
-const MAX = 21;
+const MIN = 17; const MAX = 21;
 
-// Operadores com a identificação da Turma separada por "|"
 const defaultOperators = [
     "A|1243 - ALYSSON GUNDIM DE SALOMAO", "A|1052 - DANIEL DE SOUZA LEITE", "A|1096 - FABIO FONSECA", 
     "A|1212 - JOÃO EDUARDO DO CARMO COUTO", "A|1278 - JOAO PEDRO OLIVEIRA DA PALMA", "A|1347 - JOÃO VITOR JUSTINO ANTUNES", 
     "A|1026 - JOSE RONALDO DOMINGOS", "A|1195 - LEONARDO HENRIQUE MACHADO DA SILVA", "A|1190 - LUCAS CORREA DOS SANTOS", 
-    "A|1351 - LUCIANO LOURENCO FERNANDES", "A|1117 - LUIZ GUSTAVO DE CAMPOS CORREA E CASTRO", "A|1021 - MARCOS ROBERTO NOGUEIRA DOS SANTOS", 
-    "A|1032 - NELSON RIBEIRO DA SILVA", "A|1124 - RAFAEL DE SOUZA GUARDIANO DOS REIS", "A|1227 - RENAN LUIS DA SILVA", 
-    "A|1100 - ROBSON DO CARMO COUTO", "A|1115 - THIAGO BARBOSA SILVA", "A|1394 - THIAGO DOS SANTOS JERONIMO", 
-    "A|1285 - THIAGO RIBEIRO FONSECA", "A|1256 - WELLINGTON RIBEIRO SILVA", 
+    "A|1351 - LUCIANO LOURENCO FERNANDES", "A|1021 - MARCOS ROBERTO NOGUEIRA DOS SANTOS", "A|1032 - NELSON RIBEIRO DA SILVA", 
+    "A|1124 - RAFAEL DE SOUZA GUARDIANO DOS REIS", "A|1227 - RENAN LUIS DA SILVA", "A|1100 - ROBSON DO CARMO COUTO", 
+    "A|1115 - THIAGO BARBOSA SILVA", "A|1394 - THIAGO DOS SANTOS JERONIMO", "A|1285 - THIAGO RIBEIRO FONSECA", 
+    "A|1256 - WELLINGTON RIBEIRO SILVA", 
     "B|1222 - ALISSON OLIVEIRA DE MARINS", "B|1410 - CARLOS HENRIQUE DE CARVALHO", "B|1286 - EMANUEL FELIPE DE OLIVEIRA FONSECA", 
     "B|1020 - FABIO ZANIN", "B|1188 - GABRIEL MOTA DE ALMEIDA", "B|1330 - GIAN FONSECA DE SOUZA", 
     "B|1107 - INALDO HENRIQUE DE OLIVEIRA", "B|1029 - JOSE MAURICIO GUIMARAES NOGUEIRA", "B|1030 - JULIANO DE SOUZA MENEZES", 
@@ -414,18 +890,19 @@ const defaultOperators = [
     "B|1189 - MATHEUS CARVALHO GONÇALVES", "B|1305 - MESSIAS SANTO DE ALMEIDA", "B|1033 - RAFAEL DE ARAUJO SANTOS", 
     "B|1176 - RAMON FERNANDES DE NORONHA", "B|1094 - RICARDO MENEZES DOS SANTOS", "B|1093 - VINICIUS DA SILVA VIEIRA", 
     "B|1151 - WALTER MARINHO ALVES FILHO", 
-    "C|1076 - ADILSON MONTEIRO DE OLIVEIRA", "C|1050 - ALEXANDRE VALDOMIRO PINTO", "C|1072 - EDER DINIZ NATIVIDADE", 
-    "C|1327 - EMANUEL RIBEIRO", "C|1226 - GABRIEL BATISTA DA SILVA", "C|1023 - GILMAR DE OLIVEIRA JOAQUIM", 
-    "C|1025 - JOAO RICARDO DE SIQUEIRA MOTA", "C|1245 - JOÃO VITOR DE SOUZA JACOB", "C|1450 - LORAN", 
-    "C|1223 - LUAN PHELIPE PEDREIRA DE OLIVEIRA", "C|1343 - MARCUS AURELIUS DA SILVA RIBEIRO", "C|1089 - REINALDO MONTEIRO DE OLIVEIRA", 
-    "C|1338 - ROGER HENRIQUE NOBRE", "C|1324 - SAMUEL PAES DOS SANTOS", "C|1064 - SANDRO DE ALMEIDA CHAVES", 
-    "C|1035 - TIAGO FONSECA", "C|1197 - WILLIANS SILVA LEMES", 
+    "C|1117 - LUIZ GUSTAVO DE CAMPOS CORREA E CASTRO", "C|1076 - ADILSON MONTEIRO DE OLIVEIRA", "C|1050 - ALEXANDRE VALDOMIRO PINTO", 
+    "C|1072 - EDER DINIZ NATIVIDADE", "C|1327 - EMANUEL RIBEIRO", "C|1226 - GABRIEL BATISTA DA SILVA", 
+    "C|1023 - GILMAR DE OLIVEIRA JOAQUIM", "C|1025 - JOAO RICARDO DE SIQUEIRA MOTA", "C|1245 - JOÃO VITOR DE SOUZA JACOB", 
+    "C|1450 - LORAN", "C|1223 - LUAN PHELIPE PEDREIRA DE OLIVEIRA", "C|1343 - MARCUS AURELIUS DA SILVA RIBEIRO", 
+    "C|1089 - REINALDO MONTEIRO DE OLIVEIRA", "C|1338 - ROGER HENRIQUE NOBRE", "C|1324 - SAMUEL PAES DOS SANTOS", 
+    "C|1064 - SANDRO DE ALMEIDA CHAVES", "C|1035 - TIAGO FONSECA", "C|1197 - WILLIANS SILVA LEMES", 
+    "C|1385 - HEITOR DE OLIVEIRA ZACARIAS DE SOUZA", 
     "D|1120 - ADRIANO CARVALHO LOPES", "D|1022 - AILTON DE JESUS", "D|1317 - CAYO VINICIUS DE JESUS MARCIANO", 
     "D|1090 - DANILO AUGUSTO DE LIMA MONTEIRO", "D|1406 - DAVID BRENO DE JESUS SANTOS", "D|1357 - EDUARDO RODRIGUES DE SOUZA", 
-    "D|1131 - FLAVIO GALVAO FELICIANO", "D|1385 - HEITOR DE OLIVEIRA ZACARIAS DE SOUZA", "D|1172 - JOÃO LUCAS GONÇALVES SANTANNA", 
-    "D|1329 - JOAO PAULO DA SILVA", "D|1251 - LUIZ MIGUEL LEMES DOS SANTOS", "D|1252 - PAULO CESAR DA SILVA FILHO", 
-    "D|1418 - RAFAEL OLIVEIRA DE ANDRADE", "D|1034 - RODRIGO AMERICO ALEXANDRE", "D|1387 - ROMARIO ROLIM DO AMARAL", 
-    "D|1274 - RUAN CARNEIRO CIPRIANO", "D|1105 - WAGNER LUCAS DE ALMEIDA", "D|1027 - WAGNER RODRIGUES DE SOUZA"
+    "D|1131 - FLAVIO GALVAO FELICIANO", "D|1172 - JOÃO LUCAS GONÇALVES SANTANNA", "D|1329 - JOAO PAULO DA SILVA", 
+    "D|1251 - LUIZ MIGUEL LEMES DOS SANTOS", "D|1252 - PAULO CESAR DA SILVA FILHO", "D|1418 - RAFAEL OLIVEIRA DE ANDRADE", 
+    "D|1034 - RODRIGO AMERICO ALEXANDRE", "D|1387 - ROMARIO ROLIM DO AMARAL", "D|1274 - RUAN CARNEIRO CIPRIANO", 
+    "D|1105 - WAGNER LUCAS DE ALMEIDA", "D|1027 - WAGNER RODRIGUES DE SOUZA"
 ];
 
 const defaultOrders = [
@@ -441,344 +918,679 @@ const defaultOrders = [
     "Super 88", "Pague Menos", "SP Market", "Forte Mix", "Ville Fort", "Big Mart", "Sac RJ", "Porecatu"
 ];
 
+const defaultSizes = ["30x40", "36x40", "36x48", "36x50", "37x48", "37x50", "38x40", "38x48", "38x50", "40x50", "48x55", "50x60", "58x70", "60x70"];
+
 const defaultInks = [
-    "Amarelo 012", "Amarelo 109", "Amarelo 116", "Amarelo 137", "Amarelo 2017", "Amarelo 6003", "Amarelo 803",
-    "Azul 072", "Azul 243", "Azul 2746", "Azul 2747", "Azul 2766", "Azul 2767", "Azul 288", "Azul 2935", "Azul 2955", 
-    "Azul 534", "Azul 541", "Azul 661", "Azul 662", "Azul 672", "Azul Condor", "Azul Cyan", "Azul Ponte", "Azul Reflex", "Azul Shibata",
-    "Branco", "Cinza",
-    "Laranja 021", "Laranja 138", "Laranja 1575", "Laranja 158", "Laranja 1585", "Laranja 172", "Laranja Bretas",
-    "Magenta", "Preto",
-    "Verde 3415", "Verde 3435", "Verde 355", "Verde 356", "Verde 368", "Verde 375", "Verde Bretas",
-    "Vermelho 032", "Vermelho 1795", "Vermelho 185", "Vermelho 191", "Vermelho 200", "Vermelho 355", "Vermelho 361", "Vermelho 485",
-    "Vinho 193"
+    "AMARELO 102", "AMARELO 107", "AMARELO 109", "AMARELO 110", "AMARELO 115", "AMARELO 116", "AMARELO 117", 
+    "AMARELO 1205", "AMARELO 1215", "AMARELO 122", "AMARELO 1225", "AMARELO 123", "AMARELO 1235", "AMARELO 124", 
+    "AMARELO 127", "AMARELO 130", "AMARELO 136", "AMARELO 137", "AMARELO 17-7C", "AMARELO 2017", "AMARELO 3945", 
+    "AMARELO 7404", "AMARELO 7408/7404 (OCRE)", "AMARELO 7548", "AMARELO 7563 OURO", "AMARELO 803", "AMARELO YELOW C", 
+    "AZUL 2118", "AZUL 2119", "AZUL 2145", "AZUL 2154", "AZUL 2172 MATHEUS", "AZUL 2174", "AZUL 2391", "AZUL 2718", 
+    "AZUL 2728", "AZUL 273", "AZUL 2735", "AZUL 2736", "AZUL 2738", "AZUL 274", "AZUL 274 BAHAMAS", "AZUL 2746", 
+    "AZUL 2747", "AZUL 275", "AZUL 2755", "AZUL 2756", "AZUL 2756 EXPORT", "AZUL 2758", "AZUL 276", "AZUL 2766", 
+    "AZUL 2767", "AZUL 280", "AZUL 281", "AZUL 285", "AZUL 286", "AZUL 287", "AZUL 288", "AZUL 289", "AZUL 2915", 
+    "AZUL 293", "AZUL 2935", "AZUL 294", "AZUL 2945", "AZUL 295", "AZUL 2955", "AZUL 297", "AZUL 2995", "AZUL 3005", 
+    "AZUL 301", "AZUL 302", "AZUL 3025", "AZUL 305", "AZUL 311", "AZUL 321", "AZUL 326", "AZUL 3506", "AZUL 3597", 
+    "AZUL 533", "AZUL 534", "AZUL 5395", "AZUL 540", "AZUL 541", "AZUL 648", "AZUL 653", "AZUL 654", "AZUL 655", 
+    "AZUL 661", "AZUL 662", "AZUL 7462", "AZUL 7484", "AZUL 7672", "AZUL 7685", "AZUL 7686", "AZUL 7687", "AZUL 7691", 
+    "AZUL 7692", "AZUL 801", "AZUL ALMEIDA", "AZUL BARBOSÃO", "AZUL CONDOR", "AZUL LUCENA", "AZUL OLÍVIO", 
+    "AZUL PATROCÍNIO", "AZUL PONTE", "AZUL PROCESS BLUE", "AZUL REFLEX BLUE", "AZUL SHIBATA", "AZUL UNI", 
+    "BORDO 1807", "BORDO 1955", "BORDO 201", "BORDO 504", "CINZA", "DOURADO 104", "DOURADO 1245", "DOURADO 1265", 
+    "DOURADO 3985", "DOURADO 6006", "DOURADO 7753", "DOURADO 871", "DOURADO 871 / 2", "DOURADO RIGHI 123", 
+    "LARANJA 021 ORANGE", "LARANJA 021 ORANGE AMMPA", "LARANJA 1375", "LARANJA 138", "LARANJA 1505", "LARANJA 151", 
+    "LARANJA 152", "LARANJA 157", "LARANJA 1575", "LARANJA 158", "LARANJA 1585", "LARANJA 165", "LARANJA 1655", 
+    "LARANJA 166", "LARANJA 1665", "LARANJA 1667", "LARANJA 171", "LARANJA 172", "LARANJA 173", "LARANJA 2008", 
+    "LARANJA 715", "LARANJA 716", "LARANJA 7410", "LARANJA 7411", "LARANJA 7417", "LARANJA 7549", "LARANJA 7576", 
+    "LARANJA 7579", "LARANJA BRETAS", "LARANJA GIGANTE", "LARANJA MÁXIMO", "LARANJA SIMPATIA", "LARANJA VEM PELÉ", 
+    "LILÁS 259", "LILÁS 2623", "MARRON 1545", "MARRON 4625", "MARRON 4635", "MARRON 476", "MARRON 477", "MARRON 478", 
+    "MARRON 483", "MARRON 491", "MARRON 4975", "MARRON 722", "MARRON 724", "MARRON 7515", "MARRON 7533", 
+    "MARRON APOLO", "MARRON MEL", "ROSA 1955", "ROSA 215", "ROXO 255", "ROXO 2602", "ROXO 2617", "ROXO 526", 
+    "ROXO 7659", "ROXO 7742", "ROXO EXCELSIOR", "ROXO RUSCITO", "RUBINE C", "VERDE 2257", "VERDE 2267", "VERDE 2278", 
+    "VERDE 2416", "VERDE 2424", "VERDE 3258", "VERDE 327", "VERDE 3288", "VERDE 3298", "VERDE 3308", "VERDE 335", 
+    "VERDE 3405", "VERDE 341", "VERDE 3415", "VERDE 3425", "VERDE 343", "VERDE 347", "VERDE 348", "VERDE 349", 
+    "VERDE 350", "VERDE 3539", "VERDE 354", "VERDE 355", "VERDE 356", "VERDE 357", "VERDE 360", "VERDE 361", 
+    "VERDE 362", "VERDE 363", "VERDE 364", "VERDE 366", "VERDE 367", "VERDE 369", "VERDE 376", "VERDE 377", 
+    "VERDE 379", "VERDE 382", "VERDE 390", "VERDE 396", "VERDE 4212", "VERDE 555", "VERDE 583", "VERDE 7472", 
+    "VERDE 7481", "VERDE 7482", "VERDE 7483", "VERDE 7484", "VERDE 7489", "VERDE 7726", "VERDE 7727", "VERDE 7730", 
+    "VERDE 7731", "VERDE 7739", "VERDE 7742", "VERDE 7743", "VERDE 802", "VERDE GIGA", "VERDE GREEN", "VERMELHO 1788", 
+    "VERMELHO 179", "VERMELHO 1795", "VERMELHO 1797", "VERMELHO 1805", "VERMELHO 1815", "VERMELHO 185", "VERMELHO 186", 
+    "VERMELHO 187", "VERMELHO 188", "VERMELHO 191 SHIBATA", "VERMELHO 1935", "VERMELHO 1955", "VERMELHO 197", 
+    "VERMELHO 199", "VERMELHO 200", "VERMELHO 206", "VERMELHO 2347", "VERMELHO 2350", "VERMELHO 3516", "VERMELHO 3517", 
+    "VERMELHO 485", "VERMELHO 711", "VERMELHO 7598", "VERMELHO 7621", "VERMELHO 7622", "VERMELHO 7627", "VERMELHO 7682", 
+    "VERMELHO DUARTE", "VERMELHO EXCELSIOR", "VERMELHO HIROTA", "VERMELHO NORI", "VERMELHO NSA", "VERMELHO TONHÃO MAXI", 
+    "VERMELHO UNI", "VERMELHO VARANDA", "VINHO 193", "VINHO 202", "VINHO 208", "VINHO 2356", "VINHO 490", "VINHO 7427", 
+    "VIOLETA 267", "VIOLETA 7446", "PRETO" 
 ];
 
-let masterData = {
-    operators: JSON.parse(localStorage.getItem("val_operadores_v3")) || defaultOperators,
-    orders: JSON.parse(localStorage.getItem("val_pedidos_v3")) || defaultOrders,
-    inks: JSON.parse(localStorage.getItem("val_tintas_v3")) || defaultInks
+const hardcodedMachineDefaults = {
+    "A": { 2319: "1032", 2320: "1190", 2321: "1124", 2322: "1278", 2323: "1195", 2324: "1212", 2327: "1100", 2329: "1227", 2330: "1351", 2331: "1347", 2332: "1052", 2333: "1256", 2334: "1243", 2335: "1394" },
+    "B": { 2319: "1410", 2320: "1033", 2321: "1305", 2322: "1213", 2323: "1188", 2324: "1031", 2325: "1151", 2327: "1189", 2329: "1093", 2330: "1222", 2331: "1107", 2332: "1029", 2333: "1330", 2334: "1176", 2335: "1094" },
+    "C": { 2319: "1226", 2320: "1223", 2321: "1343", 2322: "1076", 2323: "1385", 2324: "1450", 2329: "1338", 2330: "1245", 2331: "1089", 2332: "1035", 2333: "1197", 2334: "1117", 2335: "1327" },
+    "D": { 2319: "1329", 2320: "1317", 2321: "1337", 2322: "1105", 2323: "1090", 2324: "1406", 2327: "1120", 2329: "1406", 2330: "1274", 2331: "1089", 2332: "1373", 2333: "1385", 2334: "1022", 2335: "1252" }
 };
 
-let records = JSON.parse(localStorage.getItem("val_historico_v3")) || [];
+let masterData = {
+    operators: JSON.parse(localStorage.getItem("val_operadores_v5")) || defaultOperators,
+    orders: JSON.parse(localStorage.getItem("val_pedidos_v5")) || defaultOrders,
+    sizes: JSON.parse(localStorage.getItem("val_tamanhos_v5")) || defaultSizes,
+    inks: JSON.parse(localStorage.getItem("val_tintas_v6")) || defaultInks 
+};
 
-let currentSession = { active: false, machine: null, operator: null, order: null, selectedColors: [], measuredColors: {} };
+let machineDefaults = JSON.parse(localStorage.getItem("val_machine_rules_v1")) || hardcodedMachineDefaults;
+let orderColorsDefaults = JSON.parse(localStorage.getItem("val_order_rules_v1")) || {};
+
+let records = JSON.parse(localStorage.getItem("val_historico_v5")) || [];
+let pendingColors = [];
+let currentSession = { active: false, machine: null, operatorCode: null, order: null, size: null, selectedColors: [], measurements: [], measuredColors: {} };
+let tempRuleColors = [];
+let statusChart = null; let teamChart = null; let machineChart = null;
+let teamDivergenceChart = null;
 
 function init() {
+    loadThemeAndFont(); 
+    const today = new Date().toISOString().split('T')[0];
+    document.getElementById("dashStartDate").value = today;
+    document.getElementById("dashEndDate").value = today;
+    document.getElementById("historyStartDate").value = today;
+    document.getElementById("historyEndDate").value = today;
+
     checkAdminAccess();
     populateMachines();
     renderMasterData();
+    initCharts(); 
     renderHistory();
+    updateOperatorSuggestion();
+    
+    renderRuleDropdowns();
+    renderMachineRules();
+    renderOrderRules();
+
     updateClock();
     setInterval(updateClock, 1000);
+    lucide.createIcons();
 }
 
+/* =========================================
+   UI E TRANSIÇÕES
+========================================= */
+function openModal(id) { document.getElementById(id).classList.add("active"); lucide.createIcons(); }
+function closeModal(id) { document.getElementById(id).classList.remove("active"); }
+function openModalAndCloseHub(targetId) { closeModal('mainMenuModal'); openModal(targetId); }
+function openDashboardModal() { 
+    openModalAndCloseHub('dashboardModal'); 
+    setTimeout(() => { 
+        if(statusChart) statusChart.resize(); 
+        if(teamChart) teamChart.resize(); 
+        if(machineChart) machineChart.resize();
+        if(teamDivergenceChart) teamDivergenceChart.resize();
+    }, 50); 
+}
+
+function loadThemeAndFont() {
+    const savedTheme = localStorage.getItem('val_theme_v5');
+    if (savedTheme === 'light') { 
+        document.body.classList.add('light-mode'); 
+        document.getElementById('modalThemeToggleBtn').innerHTML = '<i data-lucide="moon"></i> Alternar para Modo Escuro'; 
+    }
+}
+function toggleTheme() {
+    document.body.classList.toggle('light-mode');
+    const isLight = document.body.classList.contains('light-mode');
+    localStorage.setItem('val_theme_v5', isLight ? 'light' : 'dark');
+    document.getElementById('modalThemeToggleBtn').innerHTML = isLight ? '<i data-lucide="moon"></i> Alternar para Modo Escuro' : '<i data-lucide="sun"></i> Alternar para Modo Claro';
+    lucide.createIcons();
+    renderHistory(); 
+}
+
+function setTeam(val) {
+    document.getElementById('teamFilter').value = val;
+    renderOperators();
+    updateOperatorSuggestion();
+}
+
+function syncFilters(type, value) {
+    if (type === 'start') { document.getElementById("dashStartDate").value = value; document.getElementById("historyStartDate").value = value; }
+    else { document.getElementById("dashEndDate").value = value; document.getElementById("historyEndDate").value = value; }
+    renderHistory();
+}
 function switchTab(tabId, btn) {
     document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
     document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
     document.getElementById(tabId).classList.add('active');
-    btn.classList.add('active');
+    const targetBtn = btn || document.querySelector(`.tab-btn[onclick*="${tabId}"]`);
+    if (targetBtn) targetBtn.classList.add('active');
+}
+function checkAdminAccess() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const hasAdminLink = urlParams.get('admin') === 'valgroup2026';
+    const isLocalPC = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || window.location.protocol === 'file:';
+    if (hasAdminLink || isLocalPC) { document.getElementById('adminTabBtn').style.display = 'flex'; }
 }
 
+/* =========================================
+   DADOS BÁSICOS
+========================================= */
 function populateMachines() {
     const select = document.getElementById("machine");
-    select.innerHTML = "";
+    const selectRule = document.getElementById("ruleMachine");
+    select.innerHTML = ""; selectRule.innerHTML = "";
     validMachines.forEach(m => {
-        const option = document.createElement("option");
-        option.value = m;
-        option.textContent = `Máquina ${m}`;
-        select.appendChild(option);
+        const option = document.createElement("option"); option.value = m; option.textContent = `Máquina ${m}`;
+        select.appendChild(option); selectRule.appendChild(option.cloneNode(true));
     });
 }
-
 function renderOperators() {
     const teamFilter = document.getElementById("teamFilter").value;
     const select = document.getElementById("operator");
     select.innerHTML = "";
-    
     masterData.operators.forEach(op => {
         const parts = op.split('|');
         const team = parts.length > 1 ? parts[0].trim() : 'Outros';
-        const name = parts.length > 1 ? parts[1].trim() : op;
-
+        const fullOp = parts.length > 1 ? parts[1].trim() : op;
         if (teamFilter === "ALL" || teamFilter === team) {
-            const option = document.createElement("option");
-            option.value = name; 
-            option.textContent = name;
+            const option = document.createElement("option"); option.value = fullOp; option.textContent = fullOp;
             select.appendChild(option);
         }
     });
 }
-
 function renderMasterData() {
-    localStorage.setItem("val_operadores_v3", JSON.stringify(masterData.operators));
-    localStorage.setItem("val_pedidos_v3", JSON.stringify(masterData.orders));
-    localStorage.setItem("val_tintas_v3", JSON.stringify(masterData.inks));
+    localStorage.setItem("val_operadores_v5", JSON.stringify(masterData.operators));
+    localStorage.setItem("val_pedidos_v5", JSON.stringify(masterData.orders));
+    localStorage.setItem("val_tamanhos_v5", JSON.stringify(masterData.sizes));
+    localStorage.setItem("val_tintas_v6", JSON.stringify(masterData.inks));
 
     renderOperators(); 
     
-    const orderDataList = document.getElementById("ordersDataList");
-    orderDataList.innerHTML = "";
-    masterData.orders.forEach(item => {
-        const opt = document.createElement("option");
-        opt.value = item;
-        orderDataList.appendChild(opt);
-    });
-
-    const colorsContainer = document.getElementById("colorCheckboxes");
-    colorsContainer.innerHTML = "";
-    masterData.inks.forEach((ink, idx) => {
-        colorsContainer.innerHTML += `
-            <label class="color-option">
-                <input type="checkbox" value="${ink}" id="ink_${idx}">
-                <span>${ink}</span>
-            </label>
-        `;
-    });
+    const updateDataList = (id, arr) => {
+        const el = document.getElementById(id); el.innerHTML = "";
+        arr.forEach(item => { const opt = document.createElement("option"); opt.value = item; el.appendChild(opt); });
+    };
+    updateDataList("ordersDataList", masterData.orders);
+    updateDataList("sizesDataList", masterData.sizes);
+    updateDataList("inksDataList", masterData.inks);
 
     renderCrudList("operatorsList", masterData.operators, 'operators');
     renderCrudList("ordersList", masterData.orders, 'orders');
+    renderCrudList("sizesList", masterData.sizes, 'sizes');
     renderCrudList("inksList", masterData.inks, 'inks');
+    renderRuleDropdowns();
 }
 
 function renderCrudList(elementId, array, category) {
-    const list = document.getElementById(elementId);
-    list.innerHTML = "";
+    const list = document.getElementById(elementId); list.innerHTML = "";
     array.forEach((item, index) => {
+        list.innerHTML += `<li><span>${item}</span><button class="delete-btn" onclick="removeMasterData('${category}', ${index})"><i data-lucide="trash-2"></i> Remover</button></li>`;
+    });
+    lucide.createIcons();
+}
+function addMasterData(category, inputId) {
+    const input = document.getElementById(inputId); const val = input.value.trim().toUpperCase();
+    if (!val) return; masterData[category].push(val); input.value = ""; renderMasterData();
+}
+function removeMasterData(category, index) { masterData[category].splice(index, 1); renderMasterData(); }
+
+/* =========================================
+   REGRAS
+========================================= */
+function renderRuleDropdowns() {
+    const selectOp = document.getElementById("ruleOperator"); selectOp.innerHTML = "";
+    masterData.operators.forEach(op => {
+        const parts = op.split('|');
+        if(parts.length > 1) {
+            const team = parts[0].trim(); const matAndName = parts[1].trim(); const matricula = matAndName.split(' - ')[0].trim();
+            const opt = document.createElement("option"); opt.value = matricula; opt.textContent = `[T. ${team}] ${matAndName}`;
+            selectOp.appendChild(opt);
+        }
+    });
+
+    const selectOrd = document.getElementById("ruleOrder"); selectOrd.innerHTML = "";
+    masterData.orders.forEach(order => {
+        const opt = document.createElement("option"); opt.value = order; opt.textContent = order;
+        selectOrd.appendChild(opt);
+    });
+}
+function saveMachineRule() {
+    const team = document.getElementById("ruleTeam").value; const machine = document.getElementById("ruleMachine").value; const matricula = document.getElementById("ruleOperator").value;
+    if(!machineDefaults[team]) machineDefaults[team] = {}; machineDefaults[team][machine] = matricula;
+    localStorage.setItem("val_machine_rules_v1", JSON.stringify(machineDefaults)); renderMachineRules(); updateOperatorSuggestion(); 
+    alert(`Regra salva! Máquina ${machine} na Turma ${team} sugerirá a matrícula ${matricula}.`);
+}
+function deleteMachineRule(team, machine) {
+    if(machineDefaults[team] && machineDefaults[team][machine]) {
+        delete machineDefaults[team][machine]; localStorage.setItem("val_machine_rules_v1", JSON.stringify(machineDefaults)); renderMachineRules(); updateOperatorSuggestion();
+    }
+}
+function renderMachineRules() {
+    const list = document.getElementById("machineRulesList"); list.innerHTML = ""; let hasRules = false;
+    Object.keys(machineDefaults).forEach(team => {
+        Object.keys(machineDefaults[team]).forEach(machine => {
+            hasRules = true; const mat = machineDefaults[team][machine]; const opData = masterData.operators.find(o => o.includes(mat)); const opName = opData ? opData.split('|')[1] : mat;
+            list.innerHTML += `
+                <li>
+                    <div><strong>SE:</strong> Turma ${team} + Máquina ${machine}</div>
+                    <div style="color:var(--accent);"><strong>SUGERIR:</strong> ${opName}</div>
+                    <div class="rules-actions"><button class="delete-btn" onclick="deleteMachineRule('${team}', '${machine}')"><i data-lucide="trash-2"></i> Excluir</button></div>
+                </li>
+            `;
+        });
+    });
+    if(!hasRules) list.innerHTML = `<span style="color:var(--muted); font-size:13px; padding:10px;">Nenhuma regra configurada.</span>`;
+    lucide.createIcons();
+}
+function updateOperatorSuggestion() {
+    const machine = document.getElementById("machine").value; const team = document.getElementById("teamFilter").value;
+    const suggestionBox = document.getElementById("operatorSuggestionBox"); const suggestedNameEl = document.getElementById("suggestedOperatorName");
+    suggestionBox.style.display = 'none';
+    if (machineDefaults[team] && machineDefaults[team][machine]) {
+        const matricula = machineDefaults[team][machine]; const opData = masterData.operators.find(o => o.includes(matricula));
+        if (opData) {
+            const fullOp = opData.split('|').length > 1 ? opData.split('|')[1].trim() : opData;
+            suggestedNameEl.textContent = fullOp; suggestionBox.dataset.value = fullOp; suggestionBox.style.display = 'block';
+        }
+    }
+}
+function applySuggestedOperator() {
+    const suggestionBox = document.getElementById("operatorSuggestionBox"); const val = suggestionBox.dataset.value; const select = document.getElementById("operator");
+    let found = false;
+    for(let i=0; i<select.options.length; i++) { if(select.options[i].value === val) { select.selectedIndex = i; found = true; break; } }
+    if(!found) {
+        setTeam("ALL"); document.getElementById('teamALL').checked = true;
+        for(let i=0; i<select.options.length; i++) { if(select.options[i].value === val) { select.selectedIndex = i; break; } }
+    }
+    suggestionBox.style.display = 'none';
+}
+
+function addRuleColor() {
+    const input = document.getElementById("ruleInkInput"); const val = input.value.trim().toUpperCase();
+    if(!val) return; if(tempRuleColors.length >= 6) return alert("Máximo de 6 cores."); if(tempRuleColors.includes(val)) return alert("Já inclusa.");
+    tempRuleColors.push(val); input.value = ""; renderRuleColorsPreview();
+}
+function removeRuleColorPreview(idx) { tempRuleColors.splice(idx, 1); renderRuleColorsPreview(); }
+function renderRuleColorsPreview() {
+    const container = document.getElementById("ruleColorsPreview"); container.innerHTML = "";
+    if(tempRuleColors.length === 0) { container.innerHTML = `<span style="color:var(--muted); font-size:13px; align-self:center;">Nenhuma cor...</span>`; return; }
+    tempRuleColors.forEach((color, idx) => {
+        container.innerHTML += `<div class="pill rule-ink" style="cursor:pointer;" onclick="removeRuleColorPreview(${idx})">${color} <i data-lucide="x" style="width:14px;color:var(--red);"></i></div>`;
+    });
+    lucide.createIcons();
+}
+function saveOrderRule() {
+    const order = document.getElementById("ruleOrder").value; if(tempRuleColors.length === 0) return alert("Adicione uma cor.");
+    orderColorsDefaults[order] = [...tempRuleColors]; localStorage.setItem("val_order_rules_v1", JSON.stringify(orderColorsDefaults));
+    tempRuleColors = []; renderRuleColorsPreview(); renderOrderRules(); alert(`Regra salva para o pedido '${order}'.`);
+}
+function deleteOrderRule(order) {
+    if(orderColorsDefaults[order]) { delete orderColorsDefaults[order]; localStorage.setItem("val_order_rules_v1", JSON.stringify(orderColorsDefaults)); renderOrderRules(); }
+}
+function renderOrderRules() {
+    const list = document.getElementById("orderRulesList"); list.innerHTML = ""; const orders = Object.keys(orderColorsDefaults);
+    if(orders.length === 0) { list.innerHTML = `<span style="color:var(--muted); font-size:13px; padding:10px;">Nenhuma regra configurada.</span>`; return; }
+    orders.forEach(order => {
+        const cores = orderColorsDefaults[order].map(c => `<span class="pill rule-ink">${c}</span>`).join(" ");
         list.innerHTML += `
             <li>
-                <span>${item}</span>
-                <button class="delete-btn" onclick="removeMasterData('${category}', ${index})">✕ Rem</button>
+                <div><strong>SE Pedido for:</strong> <span style="color:var(--accent); font-weight:bold;">${order}</span></div>
+                <div><strong>CARREGAR:</strong> ${cores}</div>
+                <div class="rules-actions"><button class="delete-btn" onclick="deleteOrderRule('${order}')"><i data-lucide="trash-2"></i> Excluir</button></div>
             </li>
         `;
     });
+    lucide.createIcons();
+}
+function checkOrderRules() {
+    const orderVal = document.getElementById("order").value.trim();
+    if(orderColorsDefaults[orderVal]) {
+        if(pendingColors.length > 0 && !confirm(`Encontramos regra automática para "${orderVal}". Substituir as cores atuais?`)) return;
+        pendingColors = [...orderColorsDefaults[orderVal]]; renderPendingColors();
+        const container = document.getElementById("selectedColorsContainer");
+        const fb = document.createElement("div"); fb.innerHTML = `<div style="width:100%; color:var(--accent); font-size:13px; font-weight:bold; margin-bottom:8px; display:flex; gap:6px;"><i data-lucide="zap"></i> Cores automáticas carregadas!</div>`;
+        container.prepend(fb); lucide.createIcons(); setTimeout(() => { if(fb.parentNode) fb.remove(); }, 4000);
+    }
 }
 
-function addMasterData(category, inputId) {
-    const input = document.getElementById(inputId);
-    const val = input.value.trim();
-    if (!val) return;
-    masterData[category].push(val);
-    input.value = "";
-    renderMasterData();
+/* =========================================
+   CONTROLE DE MEDIÇÃO
+========================================= */
+function addInkToSession() {
+    const input = document.getElementById('inkSearchInput'); const val = input.value.trim().toUpperCase();
+    if (!val) return; if (pendingColors.length >= 6) { alert("Máximo de 6 cores."); return; } if (pendingColors.includes(val)) { alert("Esta cor já foi adicionada!"); return; }
+    pendingColors.push(val); input.value = ""; renderPendingColors();
+}
+function removePendingColor(index) { pendingColors.splice(index, 1); renderPendingColors(); }
+function renderPendingColors() {
+    const container = document.getElementById("selectedColorsContainer"); container.innerHTML = "";
+    pendingColors.forEach((color, idx) => {
+        container.innerHTML += `
+            <div style="background: rgba(255,255,255,0.05); border: 1px solid var(--border); padding: 8px 14px; border-radius: 20px; display: flex; align-items: center; gap: 10px; font-size: 13px; font-weight:600;">
+                <span>${color}</span>
+                <span style="color: var(--red); cursor: pointer; display:flex;" onclick="removePendingColor(${idx})"><i data-lucide="x"></i></span>
+            </div>
+        `;
+    });
+    lucide.createIcons();
 }
 
-function removeMasterData(category, index) {
-    masterData[category].splice(index, 1);
-    renderMasterData();
-}
-
-function addCustomInk() {
-    const input = document.getElementById('customInkInput');
-    const val = input.value.trim();
-    if (!val) return;
-    
-    const container = document.getElementById('colorCheckboxes');
-    const uniqueId = 'custom_ink_' + Date.now();
-    
-    const label = document.createElement('label');
-    label.className = 'color-option';
-    label.innerHTML = `<input type="checkbox" value="${val}" id="${uniqueId}" checked> <span>${val} (Avulso)</span>`;
-    
-    container.appendChild(label);
-    input.value = "";
+function skipMachine() {
+    const machine = document.getElementById("machine").value; const reason = prompt(`ATENÇÃO: Informe o motivo para não registrar a Máquina ${machine} (ex: Setup, Manutenção, Falta de Tinta):`);
+    if (!reason) return; 
+    const now = new Date();
+    const sessionRecord = { id: Date.now(), date: now.toLocaleDateString("pt-BR"), time: now.toLocaleTimeString("pt-BR"), machine: machine, operatorCode: "-", order: "PARADA: " + reason.toUpperCase(), size: "-", measurements: [] };
+    records.unshift(sessionRecord); localStorage.setItem("val_historico_v5", JSON.stringify(records)); renderHistory();
+    alert(`Máquina ${machine} registrada como PARADA.`);
+    if (currentSession.active && currentSession.machine === machine) resetSessionUI();
 }
 
 function startMachineSession() {
-    const orderInput = document.getElementById("order").value.trim();
-    if (!orderInput) { alert("Por favor, selecione ou digite um Pedido/Cliente."); return; }
+    if (currentSession.active && !confirm("⚠️ Já existe uma medição em andamento. Deseja cancelar e iniciar uma nova?")) return;
+    const orderInput = document.getElementById("order").value.trim(); const sizeInput = document.getElementById("size").value.trim();
+    if (!orderInput) { alert("Selecione ou digite um Pedido/Cliente."); return; }
+    if (!sizeInput) { alert("Selecione ou digite um Tamanho."); return; }
+    if (pendingColors.length === 0) { alert("Adicione pelo menos uma cor/tinta para a rodada."); return; }
 
-    const selectedCheckboxes = document.querySelectorAll('#colorCheckboxes input[type="checkbox"]:checked');
-    if (selectedCheckboxes.length === 0) { alert("Selecione ou adicione pelo menos uma cor/tinta para a rodada."); return; }
-
-    const selectedColors = Array.from(selectedCheckboxes).map(cb => cb.value);
-
-    currentSession = {
-        active: true, machine: document.getElementById("machine").value,
-        operator: document.getElementById("operator").value, order: orderInput,
-        selectedColors: selectedColors, measuredColors: {}
-    };
+    const opSelect = document.getElementById("operator").value; const opCode = opSelect.includes(' - ') ? opSelect.split(' - ')[0] : opSelect;
+    currentSession = { active: true, machine: document.getElementById("machine").value, operatorCode: opCode, order: orderInput, size: sizeInput, selectedColors: [...pendingColors], measurements: [], measuredColors: {} };
     updateSessionUI();
+}
+
+function resetSessionUI() {
+    document.getElementById("order").value = ""; document.getElementById("size").value = ""; document.getElementById("inkSearchInput").value = "";
+    pendingColors = []; renderPendingColors(); currentSession = { active: false, machine: null, operatorCode: null, order: null, size: null, selectedColors: [], measurements: [], measuredColors: {} }; updateSessionUI();
 }
 
 function updateSessionUI() {
-    const statusBox = document.getElementById("sessionStatusBox");
-    const activeColorSelect = document.getElementById("activeColorSelect");
-    
-    // NOVO: Resetar o painel caso a sessão não esteja ativa
+    const statusBox = document.getElementById("sessionStatusBox"); const activeColorSelect = document.getElementById("activeColorSelect");
     if (!currentSession.active) {
-        statusBox.innerHTML = `<span style="color:var(--muted); font-size:14px;">Nenhuma sessão ativa. Inicie acima.</span>`;
-        activeColorSelect.innerHTML = "";
-        activeColorSelect.disabled = true;
-        document.getElementById("viscosity").disabled = true;
-        document.getElementById("saveBtn").disabled = true;
-        document.getElementById("status").className = "status";
-        document.getElementById("status").innerHTML = `<span class="status-dot"></span><span>Aguardando digitação</span>`;
-        return;
+        statusBox.innerHTML = `<span style="color:var(--muted); font-size:14px;"><i data-lucide="inbox" style="width:32px; height:32px; display:block; margin: 0 auto 10px; opacity: 0.5;"></i> Nenhuma sessão ativa.<br>Configure e inicie a máquina.</span>`;
+        activeColorSelect.innerHTML = ""; activeColorSelect.disabled = true; document.getElementById("viscosity").value = ""; document.getElementById("viscosity").disabled = true; document.getElementById("saveBtn").disabled = true; document.getElementById("status").className = "status"; document.getElementById("status").innerHTML = `<span class="status-dot"></span><span>Aguardando digitação</span>`;
+        lucide.createIcons(); return;
     }
-
-    const totalColors = currentSession.selectedColors.length;
-    const measuredCount = Object.keys(currentSession.measuredColors).length;
-    const isFinished = measuredCount === totalColors;
-
+    const totalColors = currentSession.selectedColors.length; const measuredCount = Object.keys(currentSession.measuredColors).length; const isFinished = measuredCount === totalColors;
     statusBox.innerHTML = `
-        <div style="display:flex; justify-content: space-between; align-items:center;">
+        <div style="display:flex; justify-content: space-between; align-items:center; text-align:left;">
             <div>
-                <strong>Máquina ${currentSession.machine}</strong><br>
-                <span style="color:var(--accent);">${currentSession.order}</span><br>
-                <small style="color:var(--muted);">Operador: ${currentSession.operator}</small>
+                <strong style="font-size:16px;">Máquina ${currentSession.machine}</strong><br>
+                <span style="color:var(--accent); font-weight:600;">${currentSession.order} (${currentSession.size})</span><br>
+                <small style="color:var(--muted);">Cód. Operador: ${currentSession.operatorCode}</small>
             </div>
             <div style="text-align: right;">
-                ${isFinished ? '<span class="badge-finished">SESSÃO CONCLUÍDA 🎉</span>' : `<strong>${measuredCount}/${totalColors}</strong><br><small>cores</small>`}
+                ${isFinished ? '<span class="badge-finished"><i data-lucide="check-circle"></i> CONCLUÍDA</span>' : `<strong style="font-size:18px;">${measuredCount}/${totalColors}</strong><br><small>cores</small>`}
             </div>
         </div>
     `;
-
-    activeColorSelect.innerHTML = "";
-    currentSession.selectedColors.forEach(color => {
+    activeColorSelect.innerHTML = ""; let nextIndex = -1;
+    currentSession.selectedColors.forEach((color, index) => {
         const isDone = currentSession.measuredColors[color] !== undefined;
-        const opt = document.createElement("option");
-        opt.value = color;
-        opt.textContent = `${color} ${isDone ? '✔ (Registrado)' : ''}`;
+        const opt = document.createElement("option"); opt.value = color; opt.textContent = `${color} ${isDone ? '✔ (Registrado)' : ''}`;
+        if (isDone) opt.disabled = true; else if (nextIndex === -1) nextIndex = index;
         activeColorSelect.appendChild(opt);
     });
-
-    activeColorSelect.disabled = false;
-    document.getElementById("viscosity").disabled = false;
-    document.getElementById("saveBtn").disabled = false;
-    document.getElementById("viscosity").focus();
+    if (nextIndex !== -1) activeColorSelect.selectedIndex = nextIndex;
+    activeColorSelect.disabled = false; document.getElementById("viscosity").disabled = false; document.getElementById("saveBtn").disabled = false; document.getElementById("viscosity").focus();
+    lucide.createIcons();
 }
 
 function classify(val) {
-    if (val < MIN) return { key: "below", label: "Abaixo do padrão" };
-    if (val > MAX) return { key: "above", label: "Acima do padrão" };
-    return { key: "ok", label: "Dentro do padrão" };
+    if (val < MIN) return { key: "below", label: "Abaixo" }; if (val > MAX) return { key: "above", label: "Acima" }; return { key: "ok", label: "OK" };
 }
 
 function updateStatus() {
-    let inputVal = document.getElementById("viscosity").value.replace(',', '.');
-    const val = Number(inputVal);
-    const statusEl = document.getElementById("status");
-
-    if (!Number.isFinite(val) || val <= 0) {
-        statusEl.className = "status";
-        statusEl.innerHTML = `<span class="status-dot"></span><span>Aguardando digitação</span>`;
-        return;
-    }
-
-    const res = classify(val);
-    statusEl.className = `status ${res.key}`;
-    statusEl.innerHTML = `<span class="status-dot"></span><span>${res.label} (Ref: ${MIN}–${MAX}s)</span>`;
+    let inputVal = document.getElementById("viscosity").value.replace(',', '.'); const val = Number(inputVal); const statusEl = document.getElementById("status");
+    if (!Number.isFinite(val) || val <= 0) { statusEl.className = "status"; statusEl.innerHTML = `<span class="status-dot"></span><span>Aguardando digitação</span>`; return; }
+    const res = classify(val); statusEl.className = `status ${res.key}`; statusEl.innerHTML = `<span class="status-dot"></span><span>${res.label} (Ref: ${MIN}–${MAX}s)</span>`;
 }
 
 function saveRecord() {
-    if (!currentSession.active) { alert("Inicie uma sessão de máquina primeiro."); return; }
-
-    let inputVal = document.getElementById("viscosity").value.replace(',', '.');
-    const val = Number(inputVal);
-    if (!Number.isFinite(val) || val <= 0) { alert("Forneça um tempo de viscosidade válido."); return; }
-
-    const activeColor = document.getElementById("activeColorSelect").value;
-    const res = classify(val);
-    const now = new Date();
-
-    const newRecord = {
-        id: Date.now(), date: now.toLocaleDateString("pt-BR"), time: now.toLocaleTimeString("pt-BR"),
-        machine: currentSession.machine, operator: currentSession.operator,
-        order: currentSession.order, color: activeColor, value: val, status: res.key, label: res.label
-    };
-
-    records.unshift(newRecord);
-    localStorage.setItem("val_historico_v3", JSON.stringify(records));
-
-    currentSession.measuredColors[activeColor] = val;
-
-    renderHistory();
-    document.getElementById("viscosity").value = "";
-    updateStatus();
-    updateSessionUI();
-
-    // NOVO: Lógica para identificar fim da sessão e limpar painel
-    const totalColors = currentSession.selectedColors.length;
-    const measuredCount = Object.keys(currentSession.measuredColors).length;
-
+    if (!currentSession.active) return;
+    let inputVal = document.getElementById("viscosity").value.replace(',', '.'); const val = Number(inputVal);
+    if (!Number.isFinite(val) || val <= 0) { alert("Forneça um tempo válido."); return; }
+    const activeColor = document.getElementById("activeColorSelect").value; const res = classify(val);
+    currentSession.measurements.push({ color: activeColor, value: val, status: res.key }); currentSession.measuredColors[activeColor] = val;
+    
+    const totalColors = currentSession.selectedColors.length; const measuredCount = Object.keys(currentSession.measuredColors).length;
     if (measuredCount === totalColors) {
-        setTimeout(() => {
-            alert("✅ Todas as cores desta rodada foram registradas! Sessão finalizada.");
-            
-            // Limpa o pedido e desmarca todas as cores
-            document.getElementById("order").value = "";
-            document.querySelectorAll('#colorCheckboxes input[type="checkbox"]').forEach(cb => cb.checked = false);
-            
-            // Se existiam tintas avulsas (customizadas) no input, limpa também
-            document.getElementById("customInkInput").value = "";
-            
-            // Desativa a sessão atual
-            currentSession = { active: false, machine: null, operator: null, order: null, selectedColors: [], measuredColors: {} };
-            
-            // Atualiza a tela (vai desabilitar botões e mostrar "Nenhuma sessão ativa")
-            updateSessionUI();
-        }, 300); // 300ms de espera para dar tempo da tela atualizar e mostrar a última cor como '✔ (Registrado)' antes do popup
+        const now = new Date();
+        const sessionRecord = { id: Date.now(), date: now.toLocaleDateString("pt-BR"), time: now.toLocaleTimeString("pt-BR"), machine: currentSession.machine, operatorCode: currentSession.operatorCode, order: currentSession.order, size: currentSession.size, measurements: [...currentSession.measurements] };
+        records.unshift(sessionRecord); localStorage.setItem("val_historico_v5", JSON.stringify(records)); renderHistory(); updateSessionUI(); 
+        setTimeout(() => { alert("Todas as cores registradas! Sessão finalizada."); resetSessionUI(); }, 300); 
+    } else {
+        document.getElementById("viscosity").value = ""; updateStatus(); updateSessionUI();
+    }
+}
+
+/* =========================================
+   HISTÓRICO E GRÁFICOS
+========================================= */
+function parseDateBR(dateStr) { const [day, month, year] = dateStr.split('/'); return `${year}-${month}-${day}`; }
+function formatDateForExcel(dateStr) { const [year, month, day] = dateStr.split('-'); return `${day}/${month}/${year}`; }
+function getTeamFromOperatorCode(code) {
+    if (!code || code === '-') return null; const opData = masterData.operators.find(o => o.includes(code)); if (opData && opData.includes('|')) return 'Turma ' + opData.split('|')[0].trim(); return null;
+}
+
+function initCharts() {
+    const textColor = document.body.classList.contains('light-mode') ? '#0f172a' : '#f2f4f5';
+    statusChart = new Chart(document.getElementById('statusChart').getContext('2d'), { type: 'doughnut', data: { labels: ['OK (Dentro)', 'Abaixo', 'Acima'], datasets: [{ data: [0, 0, 0], backgroundColor: ['#059669', '#d97706', '#dc2626'], borderWidth: 0 }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { color: textColor, font: { family:'Inter', size: 12 } } } }, cutout: '65%' } });
+    teamChart = new Chart(document.getElementById('teamChart').getContext('2d'), { type: 'bar', data: { labels: ['Turma A', 'Turma B', 'Turma C', 'Turma D'], datasets: [{ label: 'Média (s)', data: [0, 0, 0, 0], backgroundColor: ['#059669', '#059669', '#059669', '#059669'], borderRadius: 6 }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { ticks: { color: textColor, font:{family:'Inter'} }, grid: { display: false } }, y: { ticks: { color: textColor, font:{family:'Inter'} }, min: 10, max: 25, grid: { color: 'rgba(128,128,128,0.2)' } } } } });
+    machineChart = new Chart(document.getElementById('machineChart').getContext('2d'), { type: 'bar', data: { labels: validMachines.map(m => `Máq ${m}`), datasets: [{ label: 'Medições Fora', data: validMachines.map(() => 0), backgroundColor: '#dc2626', borderRadius: 6 }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { ticks: { color: textColor, font:{family:'Inter'} }, grid: { display: false } }, y: { ticks: { color: textColor, precision: 0, font:{family:'Inter'} }, beginAtZero: true, grid: { color: 'rgba(128,128,128,0.2)' } } } } });
+    teamDivergenceChart = new Chart(document.getElementById('teamDivergenceChart').getContext('2d'), { 
+        type: 'bar', 
+        data: { 
+            labels: ['Turma A', 'Turma B', 'Turma C', 'Turma D'], 
+            datasets: [{ 
+                label: 'Fora do Padrão', 
+                data: [0, 0, 0, 0], 
+                backgroundColor: '#e05c5c', 
+                borderRadius: 6 
+            }] 
+        }, 
+        options: { 
+            responsive: true, 
+            maintainAspectRatio: false, 
+            plugins: { legend: { display: false } }, 
+            scales: { 
+                x: { ticks: { color: textColor, font: { family: 'Inter' } }, grid: { display: false } }, 
+                y: { ticks: { color: textColor, precision: 0, font: { family: 'Inter' } }, beginAtZero: true, grid: { color: 'rgba(128,128,128,0.2)' } } 
+            } 
+        } 
+    });
+}
+
+function atualizarDashboard(dadosFiltrados) {
+    let coresLidas = 0; let coresOk = 0; let coresAbaixo = 0; let coresAcima = 0;
+    const turmasStats = { 'Turma A': { total: 0, count: 0 }, 'Turma B': { total: 0, count: 0 }, 'Turma C': { total: 0, count: 0 }, 'Turma D': { total: 0, count: 0 } };
+    const turmasDivergencias = { 'Turma A': 0, 'Turma B': 0, 'Turma C': 0, 'Turma D': 0 };
+    const maquinasDivergencias = {}; validMachines.forEach(m => maquinasDivergencias[m] = 0);
+
+    dadosFiltrados.forEach(r => {
+        const turma = getTeamFromOperatorCode(r.operatorCode);
+        r.measurements.forEach(m => {
+            coresLidas++; 
+            if (m.status === 'ok') coresOk++; 
+            else if (m.status === 'below') coresAbaixo++; 
+            else if (m.status === 'above') coresAcima++;
+
+            if (turma && turmasStats[turma]) { 
+                turmasStats[turma].total += m.value; 
+                turmasStats[turma].count += 1; 
+            }
+
+            if (m.status !== 'ok') { 
+                if (maquinasDivergencias[r.machine] !== undefined) { 
+                    maquinasDivergencias[r.machine]++; 
+                }
+                if (turma && turmasDivergencias[turma] !== undefined) {
+                    turmasDivergencias[turma]++;
+                }
+            }
+        });
+    });
+
+    let percOk = coresLidas > 0 ? ((coresOk / coresLidas) * 100).toFixed(1) : 0; 
+    let percAlert = coresLidas > 0 ? (((coresAbaixo + coresAcima) / coresLidas) * 100).toFixed(1) : 0;
+
+    document.getElementById("dashTotal").innerHTML = `${coresLidas} <span style="font-size:14px; color:var(--muted); font-weight:600;">cores</span>`; 
+    document.getElementById("dashOk").innerHTML = `${coresOk} <span style="font-size:14px; color:var(--green); font-weight:600;">(${percOk}%)</span>`; 
+    document.getElementById("dashAlerta").innerHTML = `${(coresAbaixo + coresAcima)} <span style="font-size:14px; color:var(--red); font-weight:600;">(${percAlert}%)</span>`;
+
+    const textColor = document.body.classList.contains('light-mode') ? '#0f172a' : '#f2f4f5';
+
+    if (statusChart) { 
+        statusChart.data.datasets[0].data = [coresOk, coresAbaixo, coresAcima]; 
+        statusChart.options.plugins.legend.labels.color = textColor; 
+        statusChart.update(); 
+    }
+    if (teamChart) {
+        const teamColors = [];
+        const teamAvgs = Object.keys(turmasStats).map(t => {
+            if (turmasStats[t].count > 0) {
+                const avg = Number((turmasStats[t].total / turmasStats[t].count).toFixed(1));
+                if (avg < MIN) teamColors.push('#d97706'); 
+                else if (avg > MAX) teamColors.push('#dc2626'); 
+                else teamColors.push('#059669'); 
+                return avg;
+            } else { 
+                teamColors.push('rgba(128,128,128,0.2)'); 
+                return 0; 
+            }
+        });
+        teamChart.data.datasets[0].data = teamAvgs; 
+        teamChart.data.datasets[0].backgroundColor = teamColors; 
+        teamChart.options.scales.x.ticks.color = textColor; 
+        teamChart.options.scales.y.ticks.color = textColor; 
+        teamChart.update();
+    }
+    if (machineChart) { 
+        machineChart.data.datasets[0].data = validMachines.map(m => maquinasDivergencias[m]); 
+        machineChart.options.scales.x.ticks.color = textColor; 
+        machineChart.options.scales.y.ticks.color = textColor; 
+        machineChart.update(); 
+    }
+    if (teamDivergenceChart) {
+        teamDivergenceChart.data.datasets[0].data = Object.values(turmasDivergencias);
+        teamDivergenceChart.options.scales.x.ticks.color = textColor;
+        teamDivergenceChart.options.scales.y.ticks.color = textColor;
+        teamDivergenceChart.update();
     }
 }
 
 function renderHistory() {
-    const tbody = document.getElementById("historyBody");
-    if (!records.length) {
-        tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; color:var(--muted); padding:30px;">Nenhum registro até o momento.</td></tr>`;
-        return;
+    const tbody = document.getElementById("historyBody"); const startDate = document.getElementById("historyStartDate").value; const endDate = document.getElementById("historyEndDate").value;
+    let filteredRecords = records; if (startDate && endDate) { filteredRecords = records.filter(r => { const rDate = parseDateBR(r.date); return rDate >= startDate && rDate <= endDate; }); }
+    atualizarDashboard(filteredRecords);
+
+    if (!filteredRecords.length) { tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; color:var(--muted); padding:40px;">Nenhum registro encontrado no período.</td></tr>`; return; }
+
+    tbody.innerHTML = filteredRecords.map(r => {
+        let inksHtml = r.measurements.length === 0 ? `<span style="color:var(--red); font-weight:bold;">MÁQUINA PARADA</span>` : r.measurements.map(m => `<span class="pill ${m.status}">${m.color}: ${m.value.toFixed(1).replace(".", ",")}s</span>`).join(" ");
+        return `
+            <tr>
+                <td><strong style="font-size:15px;">Máq. ${r.machine}</strong><br><small style="color:var(--muted)">${r.date} ${r.time}</small></td>
+                <td style="font-weight:700; color:var(--accent);">${r.operatorCode}</td>
+                <td style="font-weight:600;">${r.order}</td>
+                <td>${r.size}</td>
+                <td>${inksHtml}</td>
+                <td class="no-print" style="text-align:center; white-space:nowrap;">
+                    <button class="secondary" style="padding: 8px;" onclick="openEditModal(${r.id})"><i data-lucide="edit-2"></i></button>
+                    <button class="danger" style="padding: 8px;" onclick="deleteSingleRecord(${r.id})"><i data-lucide="trash-2"></i></button>
+                </td>
+            </tr>
+        `;
+    }).join("");
+    lucide.createIcons();
+}
+
+function openEditModal(recordId) {
+    const record = records.find(r => r.id === recordId); if (!record) return;
+    document.getElementById("editRecordId").value = record.id;
+    const selectMachine = document.getElementById("editMachine"); selectMachine.innerHTML = "";
+    validMachines.forEach(m => { const opt = document.createElement("option"); opt.value = m; opt.textContent = `Máquina ${m}`; if(String(m) === String(record.machine)) opt.selected = true; selectMachine.appendChild(opt); });
+
+    document.getElementById("editOperatorCode").value = record.operatorCode || ""; document.getElementById("editOrder").value = record.order || ""; document.getElementById("editSize").value = record.size || "";
+    const listContainer = document.getElementById("editMeasurementsList"); listContainer.innerHTML = "";
+    if (!record.measurements || record.measurements.length === 0) { listContainer.innerHTML = `<span style="color:var(--muted); font-size:13px;">Nenhuma medição (Máquina Parada).</span>`; } 
+    else {
+        record.measurements.forEach((m, idx) => {
+            listContainer.innerHTML += `
+                <div style="background:var(--card2); border:1px solid var(--border); padding:12px; border-radius:10px; display:flex; align-items:center;">
+                    <span style="font-weight:700; font-size:14px; flex:1;">${m.color}</span>
+                    <div style="display:flex; align-items:center; gap:8px;">
+                        <input type="number" step="0.1" class="edit-viscosity-input" data-index="${idx}" value="${m.value.toFixed(1)}" style="width:90px; text-align:center; padding: 10px;">
+                        <span style="font-size:13px; color:var(--muted); font-weight:600;">seg</span>
+                    </div>
+                </div>
+            `;
+        });
     }
-
-    tbody.innerHTML = records.map(r => `
-        <tr>
-            <td>${r.date}<br><small>${r.time}</small></td>
-            <td>Máq. ${r.machine}</td>
-            <td>${r.operator.split(' ')[0]}</td>
-            <td>${r.order}</td>
-            <td><strong>${r.color}</strong></td>
-            <td><strong>${r.value.toFixed(1).replace(".", ",")} s</strong></td>
-            <td><span class="pill ${r.status}">${r.label}</span></td>
-        </tr>
-    `).join("");
+    openModal("editModal");
 }
 
-function exportCSV() {
-    if (!records.length) { alert("Não há registros para exportar."); return; }
+function saveEditRecord() {
+    const recordId = Number(document.getElementById("editRecordId").value); const index = records.findIndex(r => r.id === recordId); if (index === -1) return;
+    const newOrder = document.getElementById("editOrder").value.trim(); const newSize = document.getElementById("editSize").value.trim();
+    if (!newOrder) { alert("Digite um Pedido/Cliente."); return; } if (!newSize) { alert("Digite um Tamanho."); return; }
 
-    const header = ["Data", "Hora", "Máquina", "Operador", "Pedido/Cliente", "Cor/Tinta", "Tempo (s)", "Status"];
-    const rows = records.map(r => [r.date, r.time, r.machine, r.operator, r.order, r.color, r.value.toFixed(1).replace(".", ","), r.label]);
+    records[index].machine = document.getElementById("editMachine").value; records[index].operatorCode = document.getElementById("editOperatorCode").value.trim(); records[index].order = newOrder; records[index].size = newSize;
 
-    const csvContent = [header, ...rows].map(e => e.map(val => `"${String(val).replace(/"/g, '""')}"`).join(";")).join("\r\n");
-    const blob = new Blob(["\ufeff" + csvContent], { type: "text/csv;charset=utf-8;" });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = `viscosidade_valgroup_${new Date().toISOString().slice(0,10)}.csv`;
-    link.click();
-    URL.revokeObjectURL(url);
-
-    // NOVO: Sugere a exclusão do histórico logo após o download
-    setTimeout(() => {
-        if (confirm("✅ Exportação concluída!\n\nDeseja limpar o histórico de registros agora para evitar o acúmulo de dados na memória do tablet?")) {
-            records = [];
-            localStorage.removeItem("val_historico_v3");
-            renderHistory();
-        }
-    }, 800); // Aguarda quase 1 segundo para não travar o clique de download
+    document.querySelectorAll(".edit-viscosity-input").forEach(input => {
+        const idx = Number(input.dataset.index); const val = Number(input.value.replace(',', '.'));
+        if (Number.isFinite(val) && val > 0 && records[index].measurements[idx]) { records[index].measurements[idx].value = val; records[index].measurements[idx].status = classify(val).key; }
+    });
+    localStorage.setItem("val_historico_v5", JSON.stringify(records)); renderHistory(); closeModal('editModal');
 }
 
+function deleteSingleRecord(recordId) {
+    if (!confirm("Deseja excluir este lançamento específico?")) return;
+    records = records.filter(r => r.id !== recordId); localStorage.setItem("val_historico_v5", JSON.stringify(records)); renderHistory();
+}
 function clearHistory() {
     if (!confirm("Deseja apagar todo o histórico acumulado? Esta ação não pode ser desfeita.")) return;
-    records = [];
-    localStorage.removeItem("val_historico_v3");
-    renderHistory();
+    records = []; localStorage.removeItem("val_historico_v5"); renderHistory();
 }
 
-function updateClock() {
-    const now = new Date();
-    document.getElementById("currentTime").textContent = now.toLocaleTimeString("pt-BR", {hour: '2-digit', minute:'2-digit'});
-}
+function updateClock() { document.getElementById("currentTime").textContent = new Date().toLocaleTimeString("pt-BR", {hour: '2-digit', minute:'2-digit'}); }
 
 window.onload = init;
+
+function exportExcel() {
+    const startDate = document.getElementById("historyStartDate").value; 
+    const endDate = document.getElementById("historyEndDate").value;
+    let filteredRecords = records; 
+    let periodoTexto = "Todo o período"; 
+    let fileNameDate = new Date().toISOString().slice(0,10);
+    
+    if (startDate && endDate) {
+        filteredRecords = records.filter(r => { const rDate = parseDateBR(r.date); return rDate >= startDate && rDate <= endDate; });
+        periodoTexto = (startDate === endDate) ? formatDateForExcel(startDate) : `${formatDateForExcel(startDate)} até ${formatDateForExcel(endDate)}`;
+        fileNameDate = (startDate === endDate) ? startDate : `${startDate}_a_${endDate}`;
+    }
+
+    if (!filteredRecords.length) { alert("Não há registros no período selecionado para exportar."); return; }
+    const sortedRecords = [...filteredRecords].sort((a, b) => Number(a.machine) - Number(b.machine));
+
+    let rowsHtml = "";
+    sortedRecords.forEach(r => {
+        if (r.measurements.length === 0) {
+            rowsHtml += `<tr><td style="text-align:center;">${r.date}</td><td style="text-align:center;">${r.time}</td><td style="text-align:center; font-weight:bold;">Máq ${r.machine}</td><td colspan="6" style="text-align:center; background-color:#fee2e2; color:#b91c1c; font-weight:bold;">${r.order}</td></tr>`;
+        } else {
+            r.measurements.forEach(m => {
+                let statusText = m.status === 'ok' ? 'OK' : (m.status === 'below' ? 'Abaixo' : 'Acima');
+                let statusStyle = m.status === 'ok' ? "background-color:#d1fae5; color:#059669; font-weight:bold;" : (m.status === 'below' ? "background-color:#fef3c7; color:#d97706; font-weight:bold;" : "background-color:#fee2e2; color:#dc2626; font-weight:bold;");
+                rowsHtml += `<tr><td style="text-align:center;">${r.date}</td><td style="text-align:center;">${r.time}</td><td style="text-align:center; font-weight:bold;">Máq ${r.machine}</td><td>${r.operatorCode}</td><td>${r.order}</td><td style="text-align:center;">${r.size}</td><td style="text-align:center;">${m.color}</td><td style="text-align:center; font-weight:bold;">${m.value.toFixed(1).replace(".", ",")}</td><td style="text-align:center; ${statusStyle}">${statusText}</td></tr>`;
+            });
+        }
+    });
+
+    const dataGeracao = `${new Date().toLocaleDateString('pt-BR')} às ${new Date().toLocaleTimeString('pt-BR')}`;
+    const tableHtml = `<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40"><head><meta charset="UTF-8"></head><body><table border="1" style="border-collapse: collapse; font-family: Inter, sans-serif; font-size: 14px;"><thead><tr><th colspan="9" style="background-color: #059669; color: #ffffff; font-size: 22px; height: 50px; text-align: center; vertical-align: middle;">RELATÓRIO DE VISCOSIDADE DE TINTAS - VALGROUP</th></tr><tr><th colspan="9" style="background-color: #e4e6e9; color: #333333; font-size: 14px; height: 30px; text-align: center; vertical-align: middle;">Período de Extração: ${periodoTexto} | Documento gerado no sistema em: ${dataGeracao}</th></tr><tr style="background-color: #1a1d20; color: #ffffff; height: 35px;"><th style="width: 100px; text-align:center;">Data</th><th style="width: 80px; text-align:center;">Hora</th><th style="width: 100px; text-align:center;">Máquina</th><th style="width: 250px; text-align:left;">Operador (Cód)</th><th style="width: 180px; text-align:left;">Pedido / Cliente</th><th style="width: 100px; text-align:center;">Tamanho</th><th style="width: 180px; text-align:center;">Cor Medida</th><th style="width: 120px; text-align:center;">Viscosidade (s)</th><th style="width: 120px; text-align:center;">Status</th></tr></thead><tbody>${rowsHtml}</tbody></table></body></html>`;
+
+    const blob = new Blob([tableHtml], { type: "application/vnd.ms-excel" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a"); 
+    link.href = url; 
+    link.download = `Relatorio_Viscosidade_${fileNameDate}.xls`; 
+    link.click(); 
+    URL.revokeObjectURL(url);
+    setTimeout(() => { alert("✅ Planilha Excel gerada e baixada com sucesso!"); }, 800);
+}
 </script>
 
 </body>
